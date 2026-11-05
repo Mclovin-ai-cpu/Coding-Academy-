@@ -4,6 +4,7 @@ Dieser Branch (`main`) wird von **GitHub Pages** veröffentlicht:
 
 - **Version 2** (eine einzelne `index.html`): https://mclovin-ai-cpu.github.io/Coding-Academy-/
 - **Version 3** (fertig gebaute Dateien im Ordner `v3/`): https://mclovin-ai-cpu.github.io/Coding-Academy-/v3/
+- **Testversion** (Ordner `vtest/`, Quellcode auf Branch `Vtest-mobile`, eigener Speicher): https://mclovin-ai-cpu.github.io/Coding-Academy-/vtest/
 
 Den Quellcode von Version 3 findest du auf den Branches [`v3`](../../tree/v3) (Grundlage für die GitHub-Pages-Fassung) und [`vercel`](../../tree/vercel) (wird von Vercel automatisch gebaut).
 
