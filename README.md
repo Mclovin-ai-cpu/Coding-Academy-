@@ -1,6 +1,9 @@
 # Coding Academy v3
 
-> Branches: **`v3`** = diese Next.js-App (Vercel) · **`main`** = Version 2 als einzelne index.html (GitHub Pages)
+> **Branches**
+> - `main` – wird von GitHub Pages veröffentlicht: Version 2 unter `/Coding-Academy-/`, Version 3 als fertige Dateien unter `/Coding-Academy-/v3/`
+> - `v3` – Quellcode von Version 3 (daraus wird die GitHub-Pages-Fassung gebaut)
+> - `vercel` – Quellcode von Version 3, den Vercel bei jedem Push automatisch baut und veröffentlicht
 
 Lern-App für Vibecoding-Grundlagen: Lektionen, Begriffskarten, freiwillige Praxis-Missionen und eigene Projekte.
 
@@ -23,7 +26,8 @@ Alle Inhalte liegen als Daten-Dateien in `src/data/`:
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm run build   # Produktions-Build prüfen
+npm run build         # Build für Vercel
+npm run build:pages   # Fertige Dateien für GitHub Pages im Ordner out/ (nach main/v3 kopieren)
 ```
 
 ## Aufbau

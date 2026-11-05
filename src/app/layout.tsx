@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+const base = process.env.GITHUB_PAGES === "1" ? "/Coding-Academy-/v3" : "";
+
 export const metadata: Metadata = {
+  manifest: `${base}/manifest.webmanifest`,
   title: "Coding Academy",
   description: "Vibecoding-Grundlagen lernen: Begriffe, Lektionen, Praxis-Missionen und eigene Projekte.",
   appleWebApp: { capable: true, title: "Academy", statusBarStyle: "black-translucent" },
