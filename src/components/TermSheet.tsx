@@ -5,6 +5,7 @@ import { LESSONS } from "@/data/lessons";
 import { useApp } from "@/lib/app";
 import { cardsOf, courseOf, isCustom, lessonOfTerm } from "@/lib/state";
 import { CustomTermForm } from "./CustomTermForm";
+import { askClaude, useClaude } from "./AskClaude";
 import { Icon } from "./Icon";
 import { copyText, Label, Sheet } from "./ui";
 
@@ -34,6 +35,10 @@ function TermBody({ id }: { id: string }) {
   const [keys, setKeys] = useState<K[]>(avail.length ? [avail[0].k] : []);
   const [own, setOwn] = useState("");
   const [asked, setAsked] = useState("");
+  const ai = useClaude();
+  const [aiAnswer, setAiAnswer] = useState("");
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiErr, setAiErr] = useState("");
   const lesson = lessonOfTerm(id);
   const flagged = s.flags.includes(id);
   if (editing) return <CustomTermForm editId={id} onDone={(nid) => { setEditing(false); if (!nid) openTerm(null); }} />;
@@ -49,6 +54,7 @@ function TermBody({ id }: { id: string }) {
     const f = (k.length ? k : (["a", "e", "w"] as K[])).filter((x) => C[x]);
     setKeys(f);
     setAsked(own.trim());
+    setAiAnswer(""); setAiErr("");
   };
   const prompt = `Ich lerne gerade Grundlagen für Vibecoding. Erkläre mir den Begriff „${C.t}“ (${C.s}) einfach und mit einem Alltagsvergleich. Meine Frage: ${asked}`;
 
@@ -106,11 +112,26 @@ function TermBody({ id }: { id: string }) {
       {asked && (
         <div className="view-in rounded-2xl bg-surface2 p-3.5 text-[15px]">
           <Label>Noch Fragen offen?</Label>
-          Für freie Fragen kopiert die App eine fertige Frage für Claude in deine Zwischenablage.
-          <button className="tap mt-2.5 flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-[7px] text-[13px]"
-            onClick={() => copyText(prompt, toast, "Kopiert – jetzt in Claude einfügen")}>
-            <Icon name="copy" size={16} /> Frage für Claude kopieren
-          </button>
+          {ai.available ? (
+            <>
+              {aiAnswer ? <div className="view-in mt-1 whitespace-pre-wrap">{aiAnswer}</div> : <span>Claude kann deine Frage direkt beantworten.</span>}
+              {aiErr && <div className="mt-2 rounded-xl bg-err-soft p-2.5 text-sm">{aiErr}</div>}
+              {!aiAnswer && (
+                <button disabled={aiBusy} className="tap mt-2.5 flex items-center gap-1.5 rounded-full bg-accent px-3 py-[7px] text-[13px] font-semibold text-accent-ink disabled:opacity-60"
+                  onClick={async () => { setAiBusy(true); setAiErr(""); try { setAiAnswer(await askClaude(await ai.token(), "term", asked, `${C.t}: ${C.s}`)); } catch (e) { setAiErr((e as Error).message); } setAiBusy(false); }}>
+                  {aiBusy ? "Claude denkt nach …" : "Claude direkt fragen"}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              Für freie Fragen kopiert die App eine fertige Frage für Claude in deine Zwischenablage.{ai.needsLogin ? " Mit Konto kannst du Claude auch direkt hier fragen." : ""}
+              <button className="tap mt-2.5 flex items-center gap-1.5 rounded-full border border-line bg-surface px-3 py-[7px] text-[13px]"
+                onClick={() => copyText(prompt, toast, "Kopiert – jetzt in Claude einfügen")}>
+                <Icon name="copy" size={16} /> Frage für Claude kopieren
+              </button>
+            </>
+          )}
         </div>
       )}
 

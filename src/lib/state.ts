@@ -30,6 +30,8 @@ export type State = {
   activeProject: string;
   /** Eigene Begriffe im Glossar (IDs beginnen mit "eigen-") */
   customCards: Record<string, CustomCard>;
+  /** Zeitpunkt der letzten echten Änderung (ms), für den Abgleich mit dem Konto */
+  savedAt?: number;
 };
 
 export const KEY_V3 = "codingAcademy.v3";

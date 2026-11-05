@@ -2,6 +2,7 @@
 
 import { LESSONS } from "@/data/lessons";
 import { MISSION_BY_ID } from "@/data/missions";
+import { AccountProvider, useAccount } from "@/lib/account";
 import { AppProvider, buzz, useApp } from "@/lib/app";
 import { level } from "@/lib/state";
 import { Icon } from "./Icon";
@@ -29,7 +30,7 @@ export default function Shell() {
     <AppProvider>
       {(ready) =>
         ready ? (
-          <Frame />
+          <AccountProvider><Frame /></AccountProvider>
         ) : (
           <div className="grid min-h-dvh place-items-center font-mono text-muted">
             <span>
@@ -44,6 +45,7 @@ export default function Shell() {
 
 function Frame() {
   const { s, route, go, update } = useApp();
+  const acc = useAccount();
   const [tab, sub] = route.split("/");
   const lessonOpen = tab === "lernen" && sub && LESSONS[sub];
   const missionOpen = tab === "praxis" && sub && MISSION_BY_ID[sub];
@@ -83,9 +85,10 @@ function Frame() {
             >
               <Icon name={dark ? "sun" : "moon"} size={18} />
             </button>
-            <button aria-label="Profil öffnen" onClick={() => go("profil")}
-              className={`grid h-10 w-10 place-items-center rounded-full font-mono text-[15px] font-bold ${tab === "profil" ? "bg-accent text-accent-ink" : "bg-ink text-bg"}`}>
-              {initial}
+            <button aria-label={acc.email ? `Profil öffnen, angemeldet als ${acc.email}` : "Profil öffnen"} onClick={() => go("profil")}
+              className={`relative grid h-10 w-10 place-items-center rounded-full font-mono text-[15px] font-bold ${tab === "profil" ? "bg-accent text-accent-ink" : "bg-ink text-bg"}`}>
+              {acc.email ? (s.name.trim()[0] || acc.email[0]).toUpperCase() : initial}
+              {acc.email && <span className={`absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-bg ${acc.status === "fehler" ? "bg-err" : "bg-ok"}`} aria-hidden="true" />}
             </button>
           </div>
         </header>

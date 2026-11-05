@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useApp } from "@/lib/app";
 import { BADGES, doneCount, fresh, level, levelPct, normalize, streak, today } from "@/lib/state";
+import { AccountCard } from "../AccountCard";
 import { Bar, Label } from "../ui";
 
 export function Profile() {
@@ -49,6 +50,9 @@ export function Profile() {
         })}
       </div>
 
+      <div className="mx-0.5 mt-2"><h2 className="text-lg font-bold">Konto</h2></div>
+      <AccountCard />
+
       <div className="mx-0.5 mt-2"><h2 className="text-lg font-bold">Einstellungen</h2></div>
       <div className="card flex flex-col gap-4 p-4">
         <div>
@@ -68,7 +72,7 @@ export function Profile() {
         </div>
         <div>
           <b>Daten sichern</b>
-          <div className="text-[13px] text-muted">Dein Fortschritt liegt nur in diesem Browser. Exportiere ihn als Datei oder importiere ihn auf einem anderen Gerät (auch Backups aus Version 2).</div>
+          <div className="text-[13px] text-muted">Ohne Konto liegt dein Fortschritt nur in diesem Browser. Exportiere ihn als Datei oder importiere ihn auf einem anderen Gerät (auch Backups aus Version 2).</div>
           <div className="mt-2 grid grid-cols-2 gap-2.5">
             <button className="btn-ghost" onClick={() => {
               const blob = new Blob([JSON.stringify(s, null, 2)], { type: "application/json" });
@@ -93,7 +97,7 @@ export function Profile() {
           }}>{sure ? "Sicher?" : "Reset"}</button>
         </div>
       </div>
-      <Label className="justify-center">Coding Academy · Version 3.1</Label>
+      <Label className="justify-center">Coding Academy · Version 4.0 (Login & KI)</Label>
     </div>
   );
 }

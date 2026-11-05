@@ -3,6 +3,7 @@
 import { COURSES } from "@/data/courses";
 import { LESSONS } from "@/data/lessons";
 import { LEVELS, MISSION_BY_ID, TRACK } from "@/data/missions";
+import { useAccount } from "@/lib/account";
 import { useApp } from "@/lib/app";
 import { ALL, cardsOf, courseOf, doneCount, dueCards, level, levelPct, nextLesson, projProgress, streak, trackKey } from "@/lib/state";
 import { Icon } from "../Icon";
@@ -10,6 +11,7 @@ import { Bar, Label, Ring, Tag } from "../ui";
 
 export function Home() {
   const { s, go, openTerm, migrated } = useApp();
+  const acc = useAccount();
   const h = new Date().getHours();
   const greet = h < 11 ? "Guten Morgen" : h < 18 ? "Hallo" : "Guten Abend";
   const nx = nextLesson(s);
@@ -34,6 +36,14 @@ export function Home() {
           <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-ok-soft text-ok"><Icon name="check" size={18} /></span>
           <span>Dein Fortschritt aus Version 2 wurde übernommen.</span>
         </div>
+      )}
+
+      {acc.configured && !acc.email && (
+        <button className="card tap flex items-center gap-3 p-3.5 text-left text-sm" onClick={() => go("profil")}>
+          <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-accent-soft font-mono text-xs font-bold text-accent-text">ID</span>
+          <span className="flex-1"><b>Konto anlegen</b> – Fortschritt auf allen Geräten und Claude direkt fragen</span>
+          <Icon name="arrow" size={18} />
+        </button>
       )}
 
       <div className="grid grid-cols-3 gap-2.5">

@@ -1,9 +1,10 @@
-# Coding Academy v3
+# Coding Academy
 
 > **Branches**
-> - `main` – wird von GitHub Pages veröffentlicht: Version 2 unter `/Coding-Academy-/`, Version 3 als fertige Dateien unter `/Coding-Academy-/v3/`
-> - `v3` – Quellcode von Version 3 (daraus wird die GitHub-Pages-Fassung gebaut)
-> - `vercel` – Quellcode von Version 3, den Vercel bei jedem Push automatisch baut und veröffentlicht
+> - `main` – GitHub Pages: Version 2 unter `/Coding-Academy-/`, Version 3 als fertige Dateien unter `/Coding-Academy-/v3/`
+> - `v3` – Quellcode von Version 3 (Grundlage für die GitHub-Pages-Fassung)
+> - `vercel` – Version 3, wie sie ist, für Vercel (privat über Deployment Protection)
+> - `v4` – Version 4 mit **Login (Supabase)** und **KI-Fragen an Claude**, nur auf Vercel lauffähig. Einrichtung: [docs/EINRICHTUNG.md](docs/EINRICHTUNG.md)
 
 Lern-App für Vibecoding-Grundlagen: Lektionen, Begriffskarten, freiwillige Praxis-Missionen und eigene Projekte.
 
@@ -27,7 +28,6 @@ Alle Inhalte liegen als Daten-Dateien in `src/data/`:
 npm install
 npm run dev     # http://localhost:3000
 npm run build         # Build für Vercel
-npm run build:pages   # Fertige Dateien für GitHub Pages im Ordner out/ (nach main/v3 kopieren)
 ```
 
 ## Aufbau
@@ -36,5 +36,8 @@ npm run build:pages   # Fertige Dateien für GitHub Pages im Ordner out/ (nach m
 - `src/components/views/` – Home, Lernen, Lektion, Karten, Praxis, Mission, Projekte, Projekt, Profil
 - `src/lib/state.ts` – Datenmodell, Migration von v2, XP/Level/Serie/Abzeichen
 - `src/lib/app.tsx` – Speichern, Toasts, Markieren, Navigation
+- `src/lib/account.tsx` – Login per E-Mail-Code und Abgleich mit Supabase (v4)
+- `src/app/api/ask/route.ts` – Serverfunktion für Fragen an Claude (v4)
+- `supabase/setup.sql` – Tabelle und Zugriffsregeln für Supabase (v4)
 
 Die alte Ein-Datei-Version liegt unter `archiv/v2-index.html`.

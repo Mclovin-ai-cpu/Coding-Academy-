@@ -9,6 +9,8 @@ type Ctx = {
   s: State;
   /** Zustand ändern: fn bekommt eine Kopie, die direkt verändert werden darf */
   update: (fn: (d: State) => void) => void;
+  /** Kompletten Zustand ersetzen, ohne ihn als neue Änderung zu zählen (z. B. vom Konto geladen) */
+  replace: (next: State) => void;
   addXP: (n: number, why?: string) => void;
   checkBadges: () => Badge[];
   toggleFlag: (term: string) => void;
@@ -66,6 +68,13 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
   const update = useCallback((fn: (d: State) => void) => {
     const next = structuredClone(ref.current!);
     fn(next);
+    next.savedAt = Date.now();
+    ref.current = next;
+    persist(next);
+    setS(next);
+  }, []);
+
+  const replace = useCallback((next: State) => {
     ref.current = next;
     persist(next);
     setS(next);
@@ -121,7 +130,7 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
 
   if (!s) return <>{children(false)}</>;
   return (
-    <AppCtx.Provider value={{ s, update, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated }}>
+    <AppCtx.Provider value={{ s, update, replace, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated }}>
       {children(true)}
       <div
         role="status"

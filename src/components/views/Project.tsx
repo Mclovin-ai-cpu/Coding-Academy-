@@ -11,6 +11,7 @@ import { courseOf, projProgress, today, uid, type Project, type Todo } from "@/l
 import { Icon } from "../Icon";
 import { copyText, Label, Ring, Sheet } from "../ui";
 import { ProjectSheet } from "./Projects";
+import { AskClaudeCard } from "../AskClaude";
 
 const short = (t: string, n = 26) => (t.length > n ? t.slice(0, n - 1) + "…" : t);
 
@@ -136,6 +137,10 @@ export function ProjectView({ id }: { id: string }) {
         <textarea id="noteIn" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Notiz hinzufügen …" className="mt-1 min-h-[70px] rounded-[14px] border-[1.5px] border-line bg-surface2 p-3.5 outline-none focus:border-accent" />
         <button className="btn-ghost" onClick={() => { const t = note.trim(); if (!t) return; mut((pp) => pp.notes.unshift({ id: uid(), text: t, date: today() })); setNote(""); }}>Notiz speichern</button>
       </div>
+
+      <AskClaudeCard kind="project" title="Claude zum Projekt fragen" placeholder="z. B. Was ist mein nächster Schritt?"
+        context={`Name: ${p.name}\nArt: ${T?.label || "Projekt"}\nIdee: ${p.idea || "-"}\nOffene To-dos: ${p.todos.filter((t) => !t.done).map((t) => t.text).join("; ") || "-"}\nErledigt: ${p.todos.filter((t) => t.done).map((t) => t.text).join("; ") || "-"}`}
+        onSave={(text) => mut((pp) => pp.notes.unshift({ id: uid(), text, date: today() }))} />
 
       <div className="card flex flex-col gap-2 p-4">
         <Label>Prompt für Claude</Label>
