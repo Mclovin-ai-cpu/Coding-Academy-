@@ -1,0 +1,4 @@
+:HL["/Coding-Academy-/v3/_next/static/chunks/3vavj6a7f5-eb.css","style"]
+:HL["https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap","style"]
+1:[["children",{"s":"__PAGE__","h":160}]]
+0:{"b":"0uMEgEHXxgIuv064-LR7b","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
