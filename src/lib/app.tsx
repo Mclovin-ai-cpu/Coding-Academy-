@@ -19,7 +19,13 @@ type Ctx = {
   openTerm: (id: string | null) => void;
   confetti: () => void;
   migrated: boolean;
+  /** Rückweg aus einer Lektion zur Praxis-Mission, von der man gekommen ist */
+  returnTo: ReturnTo | null;
+  setReturnTo: (r: ReturnTo | null) => void;
 };
+
+export type ReturnTo = { route: string; label: string; lesson: string };
+const RT_KEY = "codingAcademy.returnTo";
 
 const AppCtx = createContext<Ctx | null>(null);
 export const useApp = () => useContext(AppCtx)!;
@@ -36,6 +42,11 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
   const [route, setRoute] = useState("home");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [term, setTerm] = useState<string | null>(null);
+  const [returnTo, setReturnToState] = useState<ReturnTo | null>(null);
+  const setReturnTo = useCallback((r: ReturnTo | null) => {
+    setReturnToState(r);
+    try { if (r) sessionStorage.setItem(RT_KEY, JSON.stringify(r)); else sessionStorage.removeItem(RT_KEY); } catch {}
+  }, []);
   const toastT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<State | null>(null);
 
@@ -48,6 +59,7 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
     setS(state);
     setMigrated(migrated);
     setRoute(readHash());
+    try { const r = sessionStorage.getItem(RT_KEY); if (r) setReturnToState(JSON.parse(r)); } catch {}
     const onHash = () => { setRoute(readHash()); window.scrollTo({ top: 0 }); };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
@@ -121,7 +133,7 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
 
   if (!s) return <>{children(false)}</>;
   return (
-    <AppCtx.Provider value={{ s, update, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated }}>
+    <AppCtx.Provider value={{ s, update, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated, returnTo, setReturnTo }}>
       {children(true)}
       <div
         role="status"

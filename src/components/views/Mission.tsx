@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LESSONS } from "@/data/lessons";
 import { LEVELS, MISSION_BY_ID, TRACK } from "@/data/missions";
 import { useApp } from "@/lib/app";
@@ -9,18 +9,32 @@ import { Icon } from "../Icon";
 import { CodeBlock, copyText, QuizQuestion, Tag } from "../ui";
 
 export function MissionView({ id }: { id: string }) {
-  const { s, go, update, addXP, toast, checkBadges, confetti } = useApp();
+  const { s, go, update, addXP, toast, checkBadges, confetti, setReturnTo } = useApp();
   const m = MISSION_BY_ID[id];
   const st = s.missions[id];
-  const [projectId, setProjectId] = useState(st?.projectId ?? s.activeProject ?? "");
-  const [result, setResult] = useState(st?.result || "");
-  const [qi, setQi] = useState(0);
-  const [quizDone, setQuizDone] = useState(!m.quiz || !!st?.done);
+  // Zwischenstand der Mission (falls man kurz zur Lektion wechselt)
+  const draftKey = "codingAcademy.mission." + id;
+  const draft = (() => { try { return JSON.parse(sessionStorage.getItem(draftKey) || "null"); } catch { return null; } })() as null | { qi: number; quizDone: boolean; result: string; projectId: string };
+  const [projectId, setProjectId] = useState(draft?.projectId ?? st?.projectId ?? s.activeProject ?? "");
+  const [result, setResult] = useState(draft?.result ?? st?.result ?? "");
+  const [qi, setQi] = useState(draft?.qi ?? 0);
+  const [quizDone, setQuizDone] = useState(draft?.quizDone ?? (!m.quiz || !!st?.done));
   const [answered, setAnswered] = useState(false);
+  useEffect(() => {
+    try { sessionStorage.setItem(draftKey, JSON.stringify({ qi, quizDone, result, projectId })); } catch {}
+  }, [draftKey, qi, quizDone, result, projectId]);
+  const toLesson = () => {
+    setReturnTo({ route: "praxis/" + id, label: m.title, lesson: m.lesson });
+    go("lernen/" + m.lesson);
+  };
   const project = s.projects.find((p) => p.id === projectId);
+  // Offenes To-do im gewählten Projekt, zu dem diese Mission gehört
+  const linkedTodo = project?.todos.find((t) => t.mission === id && !t.done);
+  const [tickTodo, setTickTodo] = useState(true);
   const prompt = m.prompt?.replaceAll("{idee}", project?.idea || project?.name || "[DEINE IDEE IN EINEM SATZ]").replaceAll("{projekt}", project?.name || "[PROJEKT]");
 
   const complete = () => {
+    try { sessionStorage.removeItem(draftKey); } catch {}
     const first = !st?.done;
     const txt = result.trim();
     update((d) => {
@@ -29,7 +43,12 @@ export function MissionView({ id }: { id: string }) {
       TRACK.filter((t) => t.missions.includes(id)).forEach((t) => { d.track[key] = { ...(d.track[key] || {}), [t.id]: true }; });
       const p = d.projects.find((x) => x.id === projectId);
       if (p && txt) p.notes.unshift({ id: uid(), mission: id, lesson: m.lesson, text: txt, date: today() });
+      if (p && linkedTodo && tickTodo) {
+        const t = p.todos.find((x) => x.id === linkedTodo.id);
+        if (t && !t.done) { t.done = true; t.stuck = false; d.todosDone++; }
+      }
     });
+    if (linkedTodo && tickTodo) setTimeout(() => toast(`To-do „${linkedTodo.text}“ abgehakt`), 1500);
     if (first) { addXP(m.xp, "Mission geschafft"); confetti(); } else toast(txt && project ? "Im Projekt gespeichert" : "Gespeichert");
     setTimeout(checkBadges, 0);
     go(project ? "projekte/" + project.id : "praxis");
@@ -78,7 +97,7 @@ export function MissionView({ id }: { id: string }) {
         <div className="card flex flex-col gap-3 p-4">
           <span className="font-mono text-xs text-accent-text">Frage {qi + 1}/{m.quiz.length}</span>
           <h2 className="text-lg font-bold leading-snug">{m.quiz[qi].q}</h2>
-          <QuizQuestion key={qi} q={m.quiz[qi]} onCorrect={() => setAnswered(true)} />
+          <QuizQuestion key={qi} q={m.quiz[qi]} onCorrect={() => setAnswered(true)} help={{ label: LESSONS[m.lesson].title, onClick: toLesson }} />
           <button className="btn-primary w-full" disabled={!answered} onClick={() => { if (qi < m.quiz!.length - 1) { setQi(qi + 1); setAnswered(false); } else setQuizDone(true); }}>
             {qi < m.quiz.length - 1 ? "Nächste Frage" : "Challenge abschließen"} <Icon name="arrow" size={18} />
           </button>
@@ -93,16 +112,23 @@ export function MissionView({ id }: { id: string }) {
         </label>
       )}
 
-      <button onClick={() => go("lernen/" + m.lesson)} className="tap flex items-center gap-2 text-left text-sm font-semibold text-accent-text">
+      {linkedTodo && (
+        <label className="card flex items-start gap-3 p-3.5 text-sm">
+          <input type="checkbox" checked={tickTodo} onChange={(e) => setTickTodo(e.target.checked)} className="mt-0.5 h-5 w-5 flex-none accent-[var(--ok)]" />
+          <span>Danach das To-do <b>„{linkedTodo.text}“</b> in „{project!.name}“ als erledigt abhaken</span>
+        </label>
+      )}
+
+      <button onClick={toLesson} className="tap flex items-center gap-2 text-left text-sm font-semibold text-accent-text">
         <Icon name="learn" size={16} /> Hilft dabei: {LESSONS[m.lesson].title}
       </button>
 
-      <div className="sticky bottom-[calc(84px+env(safe-area-inset-bottom))] z-[5] mt-2 grid grid-cols-[1fr_2fr] gap-2.5">
+      {quizDone && <div className="sticky bottom-[calc(84px+env(safe-area-inset-bottom))] z-[5] mt-2 grid grid-cols-[1fr_2fr] gap-2.5">
         <button className="btn-ghost" onClick={() => go("praxis")}>Später</button>
         <button className="btn-primary" disabled={!quizDone} onClick={complete}>
           {project && m.result ? "Im Projekt speichern" : st?.done ? "Speichern" : "Mission abschließen"}
         </button>
-      </div>
+      </div>}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { CARDS } from "@/data/cards";
 import { COURSES } from "@/data/courses";
 import { LESSONS } from "@/data/lessons";
-import { MISSION_BY_ID, missionForLesson } from "@/data/missions";
+import { LEVELS, MISSION_BY_ID, missionForLesson, missionsForProject } from "@/data/missions";
 import { TEMPLATES } from "@/data/templates";
 import { useApp } from "@/lib/app";
 import { courseOf, projProgress, today, uid, type Project, type Todo } from "@/lib/state";
@@ -121,6 +121,27 @@ export function ProjectView({ id }: { id: string }) {
         <label className="sr-only" htmlFor="newTL">Passende Lektion</label>
         <LessonSelect id="newTL" value={newL} onChange={setNewL} />
       </div>
+
+      {(() => {
+        const pm = missionsForProject(p);
+        const open = [...pm.fromTodos.map((x) => x.mission), ...pm.forType].filter((m) => !s.missions[m.id]?.done);
+        if (!open.length) return null;
+        return (
+          <>
+            <div className="mx-0.5 mt-3 flex items-center justify-between"><h2 className="text-lg font-bold">Praxis für dieses Projekt</h2><span className="font-mono text-[13px] text-muted">{open.length} offen</span></div>
+            <div className="flex flex-col gap-2">
+              {open.slice(0, 3).map((m) => (
+                <button key={m.id} className="card tap flex items-center gap-3 rounded-2xl px-3.5 py-3 text-left" onClick={() => { update((d) => { d.activeProject = p.id; }); go("praxis/" + m.id); }}>
+                  <span className={`grid h-10 w-10 flex-none place-items-center rounded-xl font-mono text-xs font-bold ${m.level === "play" ? "bg-warn-soft text-warn" : m.level === "ai" ? "bg-accent-soft text-accent-text" : "bg-ok-soft text-ok"}`}>{LEVELS[m.level].code}</span>
+                  <span className="min-w-0 flex-1"><b className="text-[15px]">{m.title}</b><span className="block font-mono text-xs text-muted">{LEVELS[m.level].label} · {m.min} Min. · +{m.xp} XP</span></span>
+                  <Icon name="arrow" size={18} />
+                </button>
+              ))}
+              <button className="text-left text-sm font-semibold text-accent-text" onClick={() => { update((d) => { d.activeProject = p.id; }); go("praxis"); }}>Alle {open.length} in Praxis ansehen</button>
+            </div>
+          </>
+        );
+      })()}
 
       <div className="mx-0.5 mt-3"><h2 className="text-lg font-bold">Ergebnisse & Notizen</h2></div>
       <div className="card flex flex-col gap-2 p-4">

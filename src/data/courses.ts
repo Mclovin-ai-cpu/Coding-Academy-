@@ -66,6 +66,19 @@ export const COURSES: Course[] = [
     ]
   },
   {
+    "id": "produkt",
+    "title": "Website, App oder beides",
+    "short": "Web & App",
+    "ico": "[ ]",
+    "color": "#1D4ED8",
+    "lessons": [
+      "website-vs-app",
+      "ein-backend",
+      "tools-plus",
+      "store-app"
+    ]
+  },
+  {
     "id": "vibe",
     "title": "Vibecoding mit KI",
     "short": "Vibecoding",
