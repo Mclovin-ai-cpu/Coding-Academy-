@@ -1,4 +1,4 @@
-:HL["/Coding-Academy-/vtest/_next/static/chunks/085n-ym2nfvmd.css","style"]
+:HL["/Coding-Academy-/vtest/_next/static/chunks/1_xbigc_fyxgt.css","style"]
 :HL["https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap","style"]
 1:[["children",{"s":"__PAGE__","h":160}]]
-0:{"b":"H-zNWutlmu-6vvp3zpEyI","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"VGwyWiVkatglPfdv0EGpY","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
