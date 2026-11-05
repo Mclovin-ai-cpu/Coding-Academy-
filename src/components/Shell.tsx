@@ -4,6 +4,7 @@ import { LESSONS } from "@/data/lessons";
 import { MISSION_BY_ID } from "@/data/missions";
 import { AppProvider, buzz, useApp } from "@/lib/app";
 import { level } from "@/lib/state";
+import { TEST } from "@/lib/edition";
 import { Icon } from "./Icon";
 import { TermSheet } from "./TermSheet";
 import { Cards } from "./views/Cards";
@@ -75,6 +76,7 @@ function Frame() {
               <span className="text-accent-text">~/</span>{pathLabel}
               <span className="cursor-blink ml-[3px] inline-block h-[15px] w-2 bg-accent align-[-2px]" />
             </div>
+            {TEST && <span className="rounded-full bg-warn-soft px-2 py-1.5 font-mono text-[11px] font-bold text-warn" title="Testversion – getrennter Speicher">TEST</span>}
             <span className="rounded-full bg-accent-soft px-2.5 py-1.5 font-mono text-xs font-bold text-accent-text">Lv {level(s)} · {s.xp} XP</span>
             <button
               aria-label={dark ? "Hell anzeigen" : "Dunkel anzeigen"}

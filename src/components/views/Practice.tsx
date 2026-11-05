@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { LESSONS } from "@/data/lessons";
-import { LEVELS, MISSION_BY_ID, MISSIONS, missionsForProject, TRACK } from "@/data/missions";
+import { LEVELS, MISSION_BY_ID, MISSIONS, missionsForProject } from "@/data/missions";
+import { LEAN, MODEL_BY_ID, MODELS, missionsOfModel, modelForTemplate, type Model } from "@/data/strategy";
 import { TEMPLATES } from "@/data/templates";
 import type { MissionLevel } from "@/data/types";
 import { useApp } from "@/lib/app";
-import { trackDone, trackKey } from "@/lib/state";
+import { activeModel } from "@/lib/state";
 import { Icon } from "../Icon";
 import { Bar, Label } from "../ui";
 
@@ -24,19 +25,28 @@ export function Practice() {
   const { s, go, update, toast, checkBadges, confetti } = useApp();
   const [filter, setFilter] = useState<MissionLevel | "all">("all");
   const active = s.projects.find((p) => p.id === s.activeProject);
-  const key = trackKey(s);
+  // Überkategorie: Geschäftsmodell. Standard ist das Modell des aktiven Projekts.
+  const [modelId, setModelId] = useState(activeModel(s).id);
+  const model = MODEL_BY_ID[modelId] || MODELS[0];
+  const projectModel = active ? modelForTemplate(active.type) : null;
+  const ownModel = !active || projectModel?.id === model.id;
+  const key = active && ownModel ? active.id : active ? "_vorschau-" + model.id : "_";
   const tk = s.track[key] || {};
-  const nDone = trackDone(s);
-  const pm = active ? missionsForProject(active) : null;
+  const nDone = model.track.filter((st) => tk[st.id]).length;
+  const pm = active && ownModel ? missionsForProject(active) : null;
   const nextUp = pm ? [...pm.fromTodos.map((x) => ({ m: x.mission, todo: x.todo })), ...pm.forType.map((m) => ({ m, todo: "" }))].find((x) => !s.missions[x.m.id]?.done) : null;
-  const list = MISSIONS.filter((m) => (filter === "all" || m.level === filter) && !(pm && pm.ids.has(m.id)));
+  const shown = new Set(pm ? pm.ids : []);
+  const modelMissions = [...missionsOfModel(model), ...MISSIONS.filter((m) => m.types?.some((t) => model.templates.includes(t))).map((m) => m.id)]
+    .filter((id, i, a) => a.indexOf(id) === i && !shown.has(id) && MISSION_BY_ID[id]);
+  modelMissions.forEach((id) => shown.add(id));
+  const list = MISSIONS.filter((m) => (filter === "all" || m.level === filter) && !shown.has(m.id));
   const open = list.filter((m) => !s.missions[m.id]?.done);
   const done = list.filter((m) => s.missions[m.id]?.done);
 
   const toggleStep = (id: string) => {
     const was = !!tk[id];
     update((d) => { d.track[key] = { ...(d.track[key] || {}), [id]: !was }; });
-    if (!was && nDone + 1 === TRACK.length) { confetti(); toast("Strecke geschafft!"); }
+    if (!was && nDone + 1 === model.track.length) { confetti(); toast("Strecke geschafft!"); }
     setTimeout(checkBadges, 0);
   };
 
@@ -58,6 +68,27 @@ export function Practice() {
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1.5">
+        <Label>Geschäftsmodell</Label>
+        <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4" role="group" aria-label="Geschäftsmodell wählen">
+          {MODELS.map((m) => (
+            <button key={m.id} aria-pressed={model.id === m.id} onClick={() => { setModelId(m.id); if (!active) update((d) => { d.model = m.id; }); }}
+              className={`flex-none rounded-full border px-3 py-[7px] text-[13px] ${model.id === m.id ? "border-accent bg-accent font-semibold text-accent-ink" : "border-line bg-surface"}`}>
+              {m.short}{projectModel?.id === m.id ? " · dein Projekt" : ""}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <StrategyCard model={model} />
+
+      {active && !ownModel && (
+        <div className="rounded-2xl bg-surface2 p-3.5 text-[13px]">
+          Du siehst gerade Ideen für <b>{model.label}</b>. Dein Projekt „{active.name}“ gehört zu <b>{projectModel!.label}</b>.{" "}
+          <button className="font-semibold text-accent-text" onClick={() => setModelId(projectModel!.id)}>Zurück zu deinem Modell</button>
         </div>
       )}
 
@@ -101,16 +132,16 @@ export function Practice() {
       <section className="card flex flex-col gap-2.5 px-4 py-3.5">
         <div className="flex items-center gap-2">
           <div className="flex flex-1 flex-col">
-            <Label>Strecke{active ? ` · ${active.name}` : ""}</Label>
+            <Label>Strecke · {model.short}{active && ownModel ? ` · ${active.name}` : ""}</Label>
             <b className="text-[17px]">Idee umsetzen</b>
           </div>
-          <span className="font-mono text-[13px] font-bold">{nDone}/{TRACK.length}</span>
+          <span className="font-mono text-[13px] font-bold">{nDone}/{model.track.length} erledigt</span>
         </div>
-        <Bar pct={(nDone / TRACK.length) * 100} tone="ok" />
+        <Bar pct={(nDone / model.track.length) * 100} tone="ok" />
         <ol className="flex flex-col gap-1">
-          {TRACK.map((st, i) => {
+          {model.track.map((st, i) => {
             const isDone = !!tk[st.id];
-            const isNow = !isDone && TRACK.findIndex((x) => !tk[x.id]) === i;
+            const isNow = !isDone && model.track.findIndex((x) => !tk[x.id]) === i;
             const nextM = st.missions.map((m) => MISSION_BY_ID[m]).find((m) => !s.missions[m.id]?.done) || MISSION_BY_ID[st.missions[0]];
             return (
               <li key={st.id} className="flex items-center gap-2.5">
@@ -128,7 +159,14 @@ export function Practice() {
         </ol>
       </section>
 
-      <Label className="mt-2">{active ? "Weitere Missionen" : "Alle Missionen"}</Label>
+      {modelMissions.length > 0 && (
+        <>
+          <Label className="mt-2">Ideen & Missionen für {model.short} · {modelMissions.length}</Label>
+          <div className="flex flex-col gap-2">{modelMissions.map((id) => <MissionRow key={id} id={id} />)}</div>
+        </>
+      )}
+
+      <Label className="mt-2">Weitere Missionen</Label>
       <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4" role="group" aria-label="Stufe filtern">
         {(["all", "play", "ai", "build"] as const).map((k) => (
           <button key={k} onClick={() => setFilter(k)} aria-pressed={filter === k}
@@ -166,5 +204,49 @@ export function MissionRow({ id, sub }: { id: string; sub?: string }) {
       </span>
       {done ? <span className="text-ok"><Icon name="check" /></span> : <span className="font-mono text-xs font-bold text-ok">+{m.xp}</span>}
     </button>
+  );
+}
+
+/** Strategie-Übersicht nach Lean Startup für ein Geschäftsmodell */
+function StrategyCard({ model }: { model: Model }) {
+  const [open, setOpen] = useState(false);
+  const rows: [string, string][] = [
+    ["Kleinstes Produkt (MVP)", model.mvp],
+    ["Kennzahl", model.metric],
+    ["Weitermachen, wenn …", model.signal],
+    ["Erlösmodell", model.revenue],
+    ["Typischer Stack", model.stack]
+  ];
+  return (
+    <section className="card flex flex-col gap-2.5 p-4">
+      <Label>Strategie · Lean Startup</Label>
+      <b className="text-[17px] leading-snug">{model.label}</b>
+      <div className="rounded-xl bg-accent-soft p-3 text-[15px]">
+        <span className="block font-mono text-[11px] uppercase tracking-wider text-accent-text">Zuerst beweisen</span>
+        {model.hypothesis}
+      </div>
+      {open && (
+        <div className="view-in flex flex-col gap-2.5">
+          {rows.map(([k, v]) => (
+            <div key={k} className="text-sm"><span className="block text-[13px] font-semibold text-muted">{k}</span>{v}</div>
+          ))}
+          <div className="rounded-xl bg-surface2 p-3 text-sm">
+            <b className="block">{LEAN.title}</b>
+            <span className="text-muted">{LEAN.text}</span>
+            <div className="mt-2.5 grid grid-cols-3 gap-2 text-center">
+              {LEAN.loop.map((l, i) => (
+                <div key={l.k} className="rounded-lg bg-surface p-2">
+                  <span className="block font-mono text-xs font-bold text-accent-text">{i + 1}. {l.k}</span>
+                  <span className="text-xs text-muted">{l.v}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+      <button className="text-left text-sm font-semibold text-accent-text" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? "Weniger anzeigen" : "Strategie ansehen: MVP, Kennzahl, Erlösmodell"}
+      </button>
+    </section>
   );
 }

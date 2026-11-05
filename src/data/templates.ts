@@ -213,6 +213,47 @@ export const TEMPLATES: Record<string, Template> = {
       ]
     ]
   },
+  "content": {
+    "label": "Content & Newsletter",
+    "emoji": "✉️",
+    "todos": [
+      [
+        "Thema & Zielgruppe festlegen",
+        "vibe",
+        "zielgruppe"
+      ],
+      [
+        "Name & Domain finden",
+        "domain",
+        "domain-ideen"
+      ],
+      [
+        "Anmeldeseite bauen",
+        "ux",
+        "hero-text"
+      ],
+      [
+        "Newsletter-Dienst mit Double-Opt-in einrichten",
+        "tools-plus",
+        "newsletter-doi"
+      ],
+      [
+        "Impressum & Datenschutz ergänzen",
+        "legal",
+        "rechtstexte"
+      ],
+      [
+        "Erste drei Ausgaben planen und auffindbar machen",
+        "seo",
+        "seo-titel"
+      ],
+      [
+        "Monetarisierung planen (Sponsoring, Abo, Produkt)",
+        "money",
+        "zahlen"
+      ]
+    ]
+  },
   "free": {
     "label": "Eigene Idee",
     "emoji": "💡",

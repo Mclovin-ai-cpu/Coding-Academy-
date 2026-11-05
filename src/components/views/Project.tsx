@@ -78,6 +78,7 @@ export function ProjectView({ id }: { id: string }) {
           <div className="min-w-0 flex-1">
             <span className="text-[13px] text-muted">{T?.emoji || "💡"} {T?.label || "Projekt"} · seit {p.created.split("-").reverse().join(".")}{s.activeProject === p.id ? " · aktiv" : ""}</span>
             <h1 className="text-[22px] font-bold leading-tight">{p.name}</h1>
+            <span className="font-mono text-[13px] font-semibold">{p.todos.filter((t) => t.done).length}/{p.todos.length} To-dos erledigt</span>
           </div>
         </div>
         {p.idea && <p className="text-muted">{p.idea}</p>}

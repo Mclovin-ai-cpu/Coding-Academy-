@@ -4,10 +4,10 @@ import type { NextConfig } from "next";
  * Zwei Arten zu bauen:
  * - normal (`npm run build`): für Vercel
  * - GitHub Pages (`npm run build:pages`): fertige Dateien im Ordner `out/`,
- *   erreichbar unter https://mclovin-ai-cpu.github.io/Coding-Academy-/v3/
+ *   erreichbar unter https://mclovin-ai-cpu.github.io/Coding-Academy-/<PAGES_PATH>/ (Standard: v3)
  */
 const pages = process.env.GITHUB_PAGES === "1";
-const basePath = pages ? "/Coding-Academy-/v3" : undefined;
+const basePath = pages ? `/Coding-Academy-/${process.env.PAGES_PATH || "v3"}` : undefined;
 
 const nextConfig: NextConfig = {
   // Statischer Export unterstützt kein Cache Components / PPR, daher nur für Vercel aktiv

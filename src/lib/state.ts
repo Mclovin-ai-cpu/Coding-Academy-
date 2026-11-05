@@ -2,7 +2,9 @@ import { CARDS } from "@/data/cards";
 import { COURSES } from "@/data/courses";
 import type { Card } from "@/data/types";
 import { LESSONS } from "@/data/lessons";
-import { missionForLesson, TRACK } from "@/data/missions";
+import { missionForLesson } from "@/data/missions";
+import { modelForTemplate, MODEL_BY_ID, MODELS } from "@/data/strategy";
+import { TEST } from "./edition";
 
 export type Todo = { id: string; text: string; lesson: string; mission?: string; done: boolean; stuck: boolean };
 export type Note = { id: string; lesson?: string; mission?: string; text: string; date: string };
@@ -30,9 +32,13 @@ export type State = {
   activeProject: string;
   /** Eigene Begriffe im Glossar (IDs beginnen mit "eigen-") */
   customCards: Record<string, CustomCard>;
+  /** In Praxis gewähltes Geschäftsmodell (wenn kein Projekt aktiv ist) */
+  model?: string;
 };
 
-export const KEY_V3 = "codingAcademy.v3";
+/** Die Testversion speichert getrennt, übernimmt beim ersten Start aber den Stand der finalen Version */
+export const KEY_V3 = TEST ? "codingAcademy.vtest" : "codingAcademy.v3";
+const KEY_FINAL = "codingAcademy.v3";
 export const KEY_V2 = "codingAcademy.v2";
 
 export const fresh = (): State => ({
@@ -62,6 +68,7 @@ export function load(): { state: State; migrated: boolean } {
   try {
     const v3 = localStorage.getItem(KEY_V3);
     if (v3) return { state: normalize(JSON.parse(v3)), migrated: false };
+    if (TEST) { const fin = localStorage.getItem(KEY_FINAL); if (fin) return { state: normalize(JSON.parse(fin)), migrated: true }; }
     const v2 = localStorage.getItem(KEY_V2);
     if (v2) return { state: normalize(JSON.parse(v2)), migrated: true };
   } catch {}
@@ -116,9 +123,14 @@ export const isCustom = (id: string) => id.startsWith("eigen-");
 export const projProgress = (p: Project) => (p.todos.length ? Math.round((p.todos.filter((t) => t.done).length / p.todos.length) * 100) : 0);
 
 export const trackKey = (s: State) => s.activeProject || "_";
-export function trackDone(s: State, key = trackKey(s)) {
+/** Geschäftsmodell des aktiven Projekts (ohne Projekt: gewähltes Modell) */
+export const activeModel = (s: State) => {
+  const p = s.projects.find((x) => x.id === s.activeProject);
+  return p ? modelForTemplate(p.type) : MODEL_BY_ID[s.model || ""] || MODELS[0];
+};
+export function trackDone(s: State, key = trackKey(s), model = activeModel(s)) {
   const t = s.track[key] || {};
-  return TRACK.filter((st) => t[st.id]).length;
+  return model.track.filter((st) => t[st.id]).length;
 }
 
 export const BADGES: { id: string; t: string; code: string; test: (s: State) => boolean }[] = [
@@ -130,7 +142,7 @@ export const BADGES: { id: string; t: string; code: string; test: (s: State) => 
   { id: "flags", code: "⚑", t: "5 Begriffe markiert", test: (s) => s.flags.length >= 5 },
   { id: "mission", code: "</>", t: "Erste Mission", test: (s) => Object.values(s.missions).some((m) => m.done) },
   { id: "builder", code: "+80", t: "„Echt bauen“ geschafft", test: (s) => Object.entries(s.missions).some(([id, m]) => m.done && id && ["github-repo", "vercel-deploy", "domain-verbinden", "branch-pr", "anfrageformular", "supabase-tabelle", "stripe-test", "lighthouse"].includes(id)) },
-  { id: "track", code: "6/6", t: "Idee umgesetzt", test: (s) => Object.keys(s.track).some((k) => trackDone(s, k) === TRACK.length) },
+  { id: "track", code: "6/6", t: "Idee umgesetzt", test: (s) => Object.keys(s.track).some((k) => MODELS.some((m) => trackDone(s, k, m) === m.track.length)) },
   { id: "streak", code: "3d", t: "3 Tage Serie", test: (s) => streak(s) >= 3 },
   { id: "todo", code: "10", t: "10 To-dos erledigt", test: (s) => s.todosDone >= 10 },
   { id: "all", code: "100", t: "Alle Lektionen", test: (s) => doneCount(s) === ALL.length }

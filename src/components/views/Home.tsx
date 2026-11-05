@@ -2,9 +2,10 @@
 
 import { COURSES } from "@/data/courses";
 import { LESSONS } from "@/data/lessons";
-import { LEVELS, MISSION_BY_ID, TRACK } from "@/data/missions";
+import { LEVELS, MISSION_BY_ID } from "@/data/missions";
+import { TEST } from "@/lib/edition";
 import { useApp } from "@/lib/app";
-import { ALL, cardsOf, courseOf, doneCount, dueCards, level, levelPct, nextLesson, projProgress, streak, trackKey } from "@/lib/state";
+import { activeModel, ALL, cardsOf, courseOf, doneCount, dueCards, level, levelPct, nextLesson, projProgress, streak, trackKey } from "@/lib/state";
 import { Icon } from "../Icon";
 import { Bar, Label, Ring, Tag } from "../ui";
 
@@ -16,7 +17,7 @@ export function Home() {
   const due = dueCards(s).length;
   const active = s.projects.find((p) => p.id === s.activeProject) || s.projects.find((p) => p.todos.some((t) => !t.done));
   const tk = s.track[trackKey(s)] || {};
-  const step = TRACK.find((st) => !tk[st.id]);
+  const step = activeModel(s).track.find((st) => !tk[st.id]);
   const mission = step?.missions.map((m) => MISSION_BY_ID[m]).find((m) => !s.missions[m.id]?.done);
   const c = nx ? courseOf(nx) : null;
   const coursePct = c ? Math.round((c.lessons.filter((l) => s.done[l]).length / c.lessons.length) * 100) : 100;
@@ -24,7 +25,7 @@ export function Home() {
   return (
     <div className="flex flex-col gap-3.5">
       <div className="flex flex-col gap-0.5">
-        <span className="font-mono text-[13px] text-muted">$ academy --start</span>
+        <span className="font-mono text-[13px] text-muted">$ academy --start{TEST ? " --test" : ""}</span>
         <h1 className="text-[26px] font-bold leading-tight">{greet}{s.name ? `, ${s.name}` : ""}</h1>
         <span className="text-muted">Von der Geschäftsidee zur eigenen Web-App.</span>
       </div>
@@ -119,6 +120,7 @@ export function Home() {
             <Ring pct={projProgress(active)} />
             <span className="min-w-0 flex-1">
               <b>{active.name}</b>
+              <span className="block font-mono text-[13px] font-semibold">{active.todos.filter((t) => t.done).length}/{active.todos.length} To-dos erledigt</span>
               <span className="block text-[13px] text-muted">{(() => { const n = active.todos.find((t) => !t.done); return n ? `Nächster Schritt: ${n.text}` : "Alle To-dos erledigt"; })()}</span>
             </span>
           </span>

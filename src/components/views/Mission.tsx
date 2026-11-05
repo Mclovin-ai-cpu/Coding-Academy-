@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { LESSONS } from "@/data/lessons";
-import { LEVELS, MISSION_BY_ID, TRACK } from "@/data/missions";
+import { LEVELS, MISSION_BY_ID } from "@/data/missions";
+import { ALL_STEPS } from "@/data/strategy";
 import { useApp } from "@/lib/app";
 import { today, uid } from "@/lib/state";
 import { Icon } from "../Icon";
@@ -40,7 +41,7 @@ export function MissionView({ id }: { id: string }) {
     update((d) => {
       d.missions[id] = { done: true, date: today(), projectId: projectId || undefined, result: txt || undefined };
       const key = projectId || "_";
-      TRACK.filter((t) => t.missions.includes(id)).forEach((t) => { d.track[key] = { ...(d.track[key] || {}), [t.id]: true }; });
+      ALL_STEPS.filter((t) => t.missions.includes(id)).forEach((t) => { d.track[key] = { ...(d.track[key] || {}), [t.id]: true }; });
       const p = d.projects.find((x) => x.id === projectId);
       if (p && txt) p.notes.unshift({ id: uid(), mission: id, lesson: m.lesson, text: txt, date: today() });
       if (p && linkedTodo && tickTodo) {
