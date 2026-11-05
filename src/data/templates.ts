@@ -254,6 +254,88 @@ export const TEMPLATES: Record<string, Template> = {
       ]
     ]
   },
+  "social": {
+    "label": "Social-Media-Kanal",
+    "emoji": "📱",
+    "todos": [
+      [
+        "Plattform wählen: Wo ist deine Zielgruppe?",
+        "social-media",
+        "plattform-check"
+      ],
+      [
+        "Positionierung & Content-Säulen festlegen",
+        "content-creation",
+        "content-saeulen"
+      ],
+      [
+        "Profil einrichten: Bio, Link, Impressum",
+        "social-media",
+        "kanal-start"
+      ],
+      [
+        "Hooks für die ersten 10 Beiträge schreiben",
+        "social-media",
+        "hook-ideen"
+      ],
+      [
+        "4 Wochen lang 2 Beiträge pro Woche",
+        "content-creation",
+        "repurpose"
+      ],
+      [
+        "Beiträge auswerten: Was lief gut?",
+        "social-media",
+        "analyse-beitraege"
+      ],
+      [
+        "Kooperationen vorbereiten (Mediakit)",
+        "creator-business",
+        "mediakit"
+      ]
+    ]
+  },
+  "youtube": {
+    "label": "YouTube-Kanal",
+    "emoji": "▶️",
+    "todos": [
+      [
+        "Nische & Zielgruppe festlegen",
+        "youtube",
+        "zielgruppe"
+      ],
+      [
+        "Kanal einrichten: Name, Banner, Impressum",
+        "youtube",
+        "kanal-start"
+      ],
+      [
+        "Drei Videoideen als Suchfragen sammeln",
+        "youtube",
+        "youtube-titel"
+      ],
+      [
+        "Skript für das erste Video schreiben",
+        "youtube",
+        "video-skript"
+      ],
+      [
+        "Video drehen, schneiden, hochladen",
+        "youtube",
+        "keine"
+      ],
+      [
+        "Shorts aus dem Video schneiden",
+        "content-creation",
+        "repurpose"
+      ],
+      [
+        "Werbekennzeichnung & Monetarisierung klären",
+        "creator-business",
+        "werbung-check"
+      ]
+    ]
+  },
   "free": {
     "label": "Eigene Idee",
     "emoji": "💡",

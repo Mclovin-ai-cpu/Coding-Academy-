@@ -79,6 +79,19 @@ export const COURSES: Course[] = [
     ]
   },
   {
+    "id": "creator",
+    "title": "Content, Social Media & YouTube",
+    "short": "Creator",
+    "ico": "▶",
+    "color": "#B91C1C",
+    "lessons": [
+      "content-creation",
+      "social-media",
+      "youtube",
+      "creator-business"
+    ]
+  },
+  {
     "id": "vibe",
     "title": "Vibecoding mit KI",
     "short": "Vibecoding",

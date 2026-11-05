@@ -1314,5 +1314,174 @@ export const LESSONS: Record<string, Lesson> = {
         "why": "Diese Funktionen kann eine Website nur eingeschränkt."
       }
     ]
+  },
+  "content-creation": {
+    "title": "Content Creation & Personal Brand",
+    "min": 12,
+    "intro": [
+      "<b>Content Creation</b> heißt: Du erstellst regelmäßig Inhalte (Videos, Posts, Texte), die einer Zielgruppe helfen oder sie unterhalten. Aus Vertrauen wird später Umsatz.",
+      "Eine <b>Personal Brand</b> ist das, wofür man dich kennt: ein klares Thema, ein erkennbarer Stil, eine Haltung. Je enger das Thema, desto schneller findest du deine Leute.",
+      "Plane mit 3–4 <b>Content-Säulen</b>, also festen Themenbereichen. Und nutze jeden Inhalt mehrfach: Aus einem Video werden ein Short, ein Post und ein Newsletter. Das nennt man <b>Repurposing</b>."
+    ],
+    "terms": [
+      "personalbrand",
+      "contentpillar",
+      "repurposing"
+    ],
+    "code": {
+      "lang": "redaktionsplan",
+      "text": "Säule 1: Tipps        → Mo: Kurzvideo\nSäule 2: Hinter den Kulissen → Mi: Story\nSäule 3: Kundenfragen → Fr: Karussell-Post\nEin Video → Short + Post + Newsletter"
+    },
+    "tip": "Lieber zwei Beiträge pro Woche über drei Monate als zehn Beiträge in einer Woche und dann Pause. Regelmäßigkeit schlägt Menge.",
+    "task": "Lege für deine Idee drei Content-Säulen fest und schreibe zu jeder eine konkrete Beitragsidee.",
+    "quiz": [
+      {
+        "q": "Was sind Content-Säulen?",
+        "a": [
+          "Feste Themenbereiche für deine Inhalte",
+          "Server für Videos",
+          "Werbeanzeigen"
+        ],
+        "c": 0,
+        "why": "Sie geben Struktur und machen dich wiedererkennbar."
+      },
+      {
+        "q": "Was bedeutet Repurposing?",
+        "a": [
+          "Einen Inhalt in mehreren Formaten nutzen",
+          "Einen Account löschen",
+          "Follower kaufen"
+        ],
+        "c": 0,
+        "why": "Aus einem Video werden Short, Post und Newsletter: mehr Reichweite bei gleichem Aufwand."
+      }
+    ]
+  },
+  "social-media": {
+    "title": "Social Media: Plattformen & Reichweite",
+    "min": 12,
+    "intro": [
+      "Jede Plattform hat ihre Stärken: <b>Instagram</b> und <b>TikTok</b> für Kurzvideos und Bilder, <b>LinkedIn</b> für Fachthemen und B2B. Starte auf der Plattform, auf der deine Zielgruppe schon ist.",
+      "Der <b>Algorithmus</b> entscheidet, wem dein Beitrag gezeigt wird. Er belohnt, was Menschen bis zum Ende ansehen, kommentieren und teilen. Die ersten zwei Sekunden, der <b>Hook</b>, entscheiden, ob jemand weiterschaut.",
+      "Miss nicht nur Follower, sondern die <b>Engagement-Rate</b>: Wie viele reagieren auf einen Beitrag? Und denk dran: Geschäftliche Profile brauchen in Deutschland ein Impressum, oft per Link in der Bio."
+    ],
+    "terms": [
+      "algorithmus",
+      "hook",
+      "engagement",
+      "impressum"
+    ],
+    "code": {
+      "lang": "kurzvideo",
+      "text": "0–2 s   Hook: „3 Fehler beim E-Bike-Kauf“\n2–20 s  Inhalt: Fehler 1, 2, 3\n20–25 s Aufforderung: „Speicher dir das“\nText im Bild, Untertitel an"
+    },
+    "tip": "Schau dir an, welche Beiträge in deiner Nische gut laufen, und frag: Was ist der Hook? Was ist das Versprechen? Dann mach es auf deine Art.",
+    "task": "Welche Plattform nutzt deine Zielgruppe am meisten? Schreibe drei Hooks für deine ersten Beiträge.",
+    "quiz": [
+      {
+        "q": "Was ist ein Hook?",
+        "a": [
+          "Der Einstieg, der in Sekunden Aufmerksamkeit holt",
+          "Ein Bezahlsystem",
+          "Ein Hashtag-Paket"
+        ],
+        "c": 0,
+        "why": "Ohne starken Einstieg wischen Menschen weiter."
+      },
+      {
+        "q": "Was belohnt der Algorithmus meist?",
+        "a": [
+          "Ansehen bis zum Ende, Kommentare, Teilen",
+          "Möglichst viele Hashtags",
+          "Lange Pausen zwischen Posts"
+        ],
+        "c": 0,
+        "why": "Plattformen zeigen, was Menschen auf der Plattform hält."
+      }
+    ]
+  },
+  "youtube": {
+    "title": "YouTube: Kanal, Videos & Shorts",
+    "min": 15,
+    "intro": [
+      "YouTube ist auch eine <b>Suchmaschine</b>: Menschen suchen „wie mache ich …“. Videos, die solche Fragen gut beantworten, werden über Jahre gefunden.",
+      "<b>Titel</b> und <b>Thumbnail</b> (Vorschaubild) entscheiden, ob jemand klickt. Diese Klickrate heißt <b>CTR</b>. Danach zählt die <b>Watchtime</b>: Wie lange schauen Menschen zu?",
+      "<b>Shorts</b> (kurze Hochkant-Videos) bringen schnell neue Zuschauer, lange Videos bauen Vertrauen auf. Geld verdienen kannst du über das Partnerprogramm (die Voraussetzungen ändern sich, aktuell bei YouTube prüfen), Sponsoring und eigene Angebote."
+    ],
+    "terms": [
+      "thumbnail",
+      "ctr",
+      "watchtime"
+    ],
+    "code": {
+      "lang": "video-plan",
+      "text": "Suchfrage:  „E-Bike Akku richtig laden“\nTitel:      Akku richtig laden: 5 Fehler, die Geld kosten\nThumbnail:  Akku + großes ✗, max. 3 Wörter\nEinstieg:   Ergebnis in den ersten 15 Sekunden zeigen"
+    },
+    "tip": "Denke Titel und Thumbnail vor dem Dreh. Wenn dir keiner einfällt, auf den man klicken will, ist die Videoidee noch nicht stark genug.",
+    "task": "Schreibe drei Videoideen für deine Idee als Suchfragen, so wie deine Zielgruppe sie bei YouTube eintippen würde.",
+    "quiz": [
+      {
+        "q": "Wofür steht CTR bei YouTube?",
+        "a": [
+          "Anteil der Leute, die auf dein Video klicken",
+          "Länge des Videos",
+          "Anzahl der Abonnenten"
+        ],
+        "c": 0,
+        "why": "Click-Through-Rate: Wie viele klicken, nachdem sie Titel und Thumbnail gesehen haben."
+      },
+      {
+        "q": "Warum sind Erklär-Videos auf YouTube wertvoll?",
+        "a": [
+          "Sie werden über die Suche lange gefunden",
+          "Sie verschwinden nach 24 Stunden",
+          "Sie brauchen kein Thumbnail"
+        ],
+        "c": 0,
+        "why": "YouTube ist eine Suchmaschine: Gute Antworten bringen über Jahre Zuschauer."
+      }
+    ]
+  },
+  "creator-business": {
+    "title": "Geld verdienen als Creator",
+    "min": 12,
+    "intro": [
+      "Creator verdienen meist aus mehreren Quellen: <b>Sponsoring</b> (Marken bezahlen für Erwähnungen), Affiliate-Links, Werbeeinnahmen der Plattform und eigene Produkte wie Kurse, Beratung oder Merch.",
+      "Für Marken-Kooperationen brauchst du ein <b>Mediakit</b>: Wer bist du, wer schaut dir zu, welche Zahlen hast du, was kostet eine Zusammenarbeit?",
+      "Bezahlte oder geschenkte Kooperationen musst du in Deutschland als Werbung kennzeichnen, z. B. mit „Werbung“ oder „Anzeige“ gut sichtbar am Anfang. Das ist keine Rechtsberatung, im Zweifel prüfen lassen."
+    ],
+    "terms": [
+      "sponsoring",
+      "mediakit",
+      "affiliate"
+    ],
+    "code": {
+      "lang": "einnahmen",
+      "text": "Sponsoring     → Marke zahlt pro Beitrag\nAffiliate      → Provision pro Verkauf\nPlattform      → Anteil an Werbeeinnahmen\nEigenes Produkt→ Kurs, Beratung, Shop\nZiel: nicht von einer Quelle abhängig sein"
+    },
+    "tip": "Eine kleine, treue Zielgruppe kann mehr wert sein als viele lose Follower. Marken achten zunehmend auf Engagement und Passung.",
+    "task": "Welche zwei Einnahmequellen passen zu deiner Idee? Schätze, was eine Kooperation bei dir kosten könnte, und begründe.",
+    "quiz": [
+      {
+        "q": "Was gehört in ein Mediakit?",
+        "a": [
+          "Zielgruppe, Zahlen und Preise für Kooperationen",
+          "Dein Passwort",
+          "Nur dein Profilbild"
+        ],
+        "c": 0,
+        "why": "Marken wollen schnell sehen, ob du zu ihnen passt."
+      },
+      {
+        "q": "Muss eine bezahlte Kooperation gekennzeichnet werden?",
+        "a": [
+          "Ja, als Werbung",
+          "Nur bei über 10.000 Followern",
+          "Nein"
+        ],
+        "c": 0,
+        "why": "Werbung muss für Zuschauer erkennbar sein, unabhängig von der Größe."
+      }
+    ]
   }
 };

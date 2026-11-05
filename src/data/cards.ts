@@ -1081,5 +1081,134 @@ export const CARDS: Record<string, Card> = {
       "pushnotification",
       "native"
     ]
+  },
+  "personalbrand": {
+    "t": "Personal Brand",
+    "s": "Das, wofür man dich als Person kennt.",
+    "a": "Dein Ruf, nur bewusst gestaltet.",
+    "e": "„Der E-Bike-Mechaniker, der alles in 60 Sekunden erklärt“",
+    "w": "Vertrauen in dich verkauft später Produkte und Kooperationen.",
+    "r": [
+      "contentpillar",
+      "repurposing"
+    ]
+  },
+  "contentpillar": {
+    "t": "Content-Säule",
+    "s": "Fester Themenbereich, aus dem deine Beiträge kommen.",
+    "a": "Die Rubriken einer Zeitschrift.",
+    "e": "Tipps · Hinter den Kulissen · Kundenfragen",
+    "w": "Macht Planung leicht und dich wiedererkennbar.",
+    "r": [
+      "personalbrand",
+      "repurposing"
+    ]
+  },
+  "repurposing": {
+    "t": "Repurposing",
+    "s": "Einen Inhalt in mehreren Formaten weiterverwenden.",
+    "a": "Aus einem Braten werden Sonntagsessen, Sandwich und Suppe.",
+    "e": "Video → Short → Post → Newsletter",
+    "w": "Mehr Reichweite ohne mehr Aufwand.",
+    "r": [
+      "personalbrand",
+      "contentpillar",
+      "newsletter"
+    ]
+  },
+  "algorithmus": {
+    "t": "Algorithmus",
+    "s": "Regeln, nach denen eine Plattform Beiträge ausspielt.",
+    "a": "Ein Türsteher, der entscheidet, wer deinen Beitrag sieht.",
+    "e": "Lange angeschaut, oft geteilt → mehr Menschen sehen ihn.",
+    "w": "Wer versteht, was belohnt wird, wächst schneller.",
+    "r": [
+      "hook",
+      "engagement",
+      "impressum"
+    ]
+  },
+  "hook": {
+    "t": "Hook",
+    "s": "Der Einstieg, der in Sekunden Aufmerksamkeit holt.",
+    "a": "Die Schlagzeile auf der Titelseite.",
+    "e": "„Diesen Fehler machen 90 % beim E-Bike-Kauf“",
+    "w": "Ohne Hook wird weitergewischt, egal wie gut der Rest ist.",
+    "r": [
+      "algorithmus",
+      "engagement",
+      "impressum",
+      "ctr"
+    ]
+  },
+  "engagement": {
+    "t": "Engagement-Rate",
+    "s": "Anteil der Menschen, die auf einen Beitrag reagieren.",
+    "a": "Wie viele im Publikum klatschen, nicht nur wie viele im Saal sitzen.",
+    "e": "100 Likes + Kommentare bei 2.000 Aufrufen = 5 %",
+    "w": "Zeigt echte Bindung, wichtig für Marken und Algorithmus.",
+    "r": [
+      "algorithmus",
+      "hook",
+      "impressum",
+      "retention",
+      "analytics"
+    ]
+  },
+  "thumbnail": {
+    "t": "Thumbnail",
+    "s": "Vorschaubild eines Videos.",
+    "a": "Das Buchcover im Regal.",
+    "e": "Großes Gesicht, ein Objekt, max. drei Wörter",
+    "w": "Entscheidet zusammen mit dem Titel, ob jemand klickt.",
+    "r": [
+      "ctr",
+      "watchtime"
+    ]
+  },
+  "ctr": {
+    "t": "CTR (Klickrate)",
+    "s": "Anteil derer, die nach dem Sehen auch klicken.",
+    "a": "Wie viele Passanten nach einem Blick ins Schaufenster den Laden betreten.",
+    "e": "1.000 sehen das Thumbnail, 50 klicken = 5 % CTR",
+    "w": "Gilt für Videos, Anzeigen und Suchergebnisse gleichermaßen.",
+    "r": [
+      "thumbnail",
+      "watchtime",
+      "conversion"
+    ]
+  },
+  "watchtime": {
+    "t": "Watchtime",
+    "s": "Wie lange Menschen deine Videos ansehen.",
+    "a": "Wie lange Gäste bleiben, nicht nur wie viele kommen.",
+    "e": "Durchschnittlich 4 von 8 Minuten angesehen",
+    "w": "Lange Wiedergabe signalisiert Qualität und bringt mehr Empfehlungen.",
+    "r": [
+      "thumbnail",
+      "ctr"
+    ]
+  },
+  "sponsoring": {
+    "t": "Sponsoring",
+    "s": "Eine Marke bezahlt dich für Erwähnung oder Beitrag.",
+    "a": "Die Bandenwerbung im Stadion, nur persönlicher.",
+    "e": "„Dieses Video wird unterstützt von …“ (als Werbung gekennzeichnet)",
+    "w": "Oft die wichtigste Einnahme für Creator, braucht Passung und Vertrauen.",
+    "r": [
+      "mediakit",
+      "affiliate"
+    ]
+  },
+  "mediakit": {
+    "t": "Mediakit",
+    "s": "Steckbrief mit Zielgruppe, Zahlen und Preisen für Marken.",
+    "a": "Die Visitenkarte plus Preisliste für Kooperationen.",
+    "e": "Reichweite, Engagement-Rate, Zielgruppe, Beispiele, Preise",
+    "w": "Ohne Mediakit kommen Marken-Deals selten zustande.",
+    "r": [
+      "sponsoring",
+      "affiliate"
+    ]
   }
 };

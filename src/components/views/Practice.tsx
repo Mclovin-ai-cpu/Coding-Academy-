@@ -207,9 +207,10 @@ export function MissionRow({ id, sub }: { id: string; sub?: string }) {
   );
 }
 
-/** Strategie-Übersicht nach Lean Startup für ein Geschäftsmodell */
+/** Strategie-Übersicht nach Lean Startup, zugeschnitten auf ein Geschäftsmodell */
 function StrategyCard({ model }: { model: Model }) {
   const [open, setOpen] = useState(false);
+  const loop: [string, string][] = [["Bauen", model.loop.build], ["Messen", model.loop.measure], ["Lernen", model.loop.learn]];
   const rows: [string, string][] = [
     ["Kleinstes Produkt (MVP)", model.mvp],
     ["Kennzahl", model.metric],
@@ -225,27 +226,28 @@ function StrategyCard({ model }: { model: Model }) {
         <span className="block font-mono text-[11px] uppercase tracking-wider text-accent-text">Zuerst beweisen</span>
         {model.hypothesis}
       </div>
+      <ol className="flex flex-col gap-2">
+        {loop.map(([k, v], i) => (
+          <li key={k} className="flex gap-2.5 text-sm">
+            <span className="grid h-6 w-6 flex-none place-items-center rounded-lg bg-surface2 font-mono text-xs font-bold text-accent-text">{i + 1}</span>
+            <span><b>{k}:</b> {v}</span>
+          </li>
+        ))}
+      </ol>
       {open && (
-        <div className="view-in flex flex-col gap-2.5">
+        <div className="view-in flex flex-col gap-2.5 border-t border-line pt-2.5">
           {rows.map(([k, v]) => (
             <div key={k} className="text-sm"><span className="block text-[13px] font-semibold text-muted">{k}</span>{v}</div>
           ))}
-          <div className="rounded-xl bg-surface2 p-3 text-sm">
-            <b className="block">{LEAN.title}</b>
-            <span className="text-muted">{LEAN.text}</span>
-            <div className="mt-2.5 grid grid-cols-3 gap-2 text-center">
-              {LEAN.loop.map((l, i) => (
-                <div key={l.k} className="rounded-lg bg-surface p-2">
-                  <span className="block font-mono text-xs font-bold text-accent-text">{i + 1}. {l.k}</span>
-                  <span className="text-xs text-muted">{l.v}</span>
-                </div>
-              ))}
-            </div>
+          <div className="text-sm">
+            <span className="block text-[13px] font-semibold text-muted">Typische Fehler bei {model.short}</span>
+            <ul className="mt-1 flex flex-col gap-1">{model.mistakes.map((m) => <li key={m} className="flex gap-2"><span className="text-err">✗</span>{m}</li>)}</ul>
           </div>
+          <div className="rounded-xl bg-surface2 p-3 text-[13px] text-muted"><b className="text-ink">{LEAN.title}.</b> {LEAN.text}</div>
         </div>
       )}
       <button className="text-left text-sm font-semibold text-accent-text" aria-expanded={open} onClick={() => setOpen(!open)}>
-        {open ? "Weniger anzeigen" : "Strategie ansehen: MVP, Kennzahl, Erlösmodell"}
+        {open ? "Weniger anzeigen" : "Mehr: MVP, Kennzahl, Erlösmodell, typische Fehler"}
       </button>
     </section>
   );
