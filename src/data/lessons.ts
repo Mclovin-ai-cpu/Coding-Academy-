@@ -1142,5 +1142,177 @@ export const LESSONS: Record<string, Lesson> = {
         "why": "So können auch Menschen mit Einschränkungen die Seite nutzen."
       }
     ]
+  },
+  "website-vs-app": {
+    "title": "Website, Web-App oder App?",
+    "min": 12,
+    "intro": [
+      "Eine <b>Website</b> will gefunden werden und überzeugen: Besucher kommen über Google oder Werbung, lesen, vergleichen und fragen an oder kaufen. Wichtig sind SEO, Ladezeit und eine klare Conversion.",
+      "Eine <b>Web-App</b> oder eine App im Store will, dass Menschen <b>wiederkommen</b> und sie regelmäßig nutzen. Wichtig sind Login, gespeicherte Daten, schnelle Bedienung und Erinnerungen. Diese Wiederkehr nennt man <b>Retention</b>.",
+      "Viele Geschäftsideen brauchen beides: eine Website, die Kunden gewinnt, und eine App, die sie hält. Starte mit dem Teil, der dein Geschäftsmodell zuerst beweist, meist der Website."
+    ],
+    "terms": [
+      "website",
+      "webapp",
+      "native",
+      "retention"
+    ],
+    "code": {
+      "lang": "übersicht",
+      "text": "Ziel                      → Start mit\nGefunden werden, Anfragen → Website / Landingpage\nTäglich nutzen, Login     → Web-App (PWA)\nKamera, Push, Offline     → App im Store\nKunden gewinnen + halten  → Website + App, ein Backend"
+    },
+    "tip": "Frage dich: Woher kommen meine Nutzer, und warum kommen sie wieder? Die erste Antwort braucht eine Website, die zweite eine App.",
+    "task": "Ordne deine Idee ein: Website, Web-App, App im Store oder beides? Begründe mit einem Satz zu „gefunden werden“ und einem zu „wiederkommen“.",
+    "quiz": [
+      {
+        "q": "Was ist der wichtigste Schwerpunkt einer Website?",
+        "a": [
+          "Gefunden werden und überzeugen",
+          "Push-Nachrichten",
+          "Offline-Nutzung"
+        ],
+        "c": 0,
+        "why": "Websites leben von Besuchern über Suche und Werbung und von einer klaren Conversion."
+      },
+      {
+        "q": "Was bedeutet Retention?",
+        "a": [
+          "Dass Nutzer wiederkommen",
+          "Die Ladezeit einer Seite",
+          "Eine Domain-Endung"
+        ],
+        "c": 0,
+        "why": "Retention misst, wie viele Nutzer nach Tagen oder Wochen noch aktiv sind."
+      }
+    ]
+  },
+  "ein-backend": {
+    "title": "Website und App mit einem Login",
+    "min": 15,
+    "intro": [
+      "Bauen Website und App getrennt eigene Konten, müssen sich Kunden doppelt registrieren und Daten passen nicht zusammen. Besser: <b>ein gemeinsames Backend</b> für beides.",
+      "Das Backend, z. B. Supabase, hält Login (<b>Auth</b>), Datenbank und Dateien. Website und App sind nur zwei Oberflächen, die über eine <b>API</b> dieselben Daten lesen und schreiben.",
+      "Mit Frameworks wie Next.js für das Web und Expo für Handy-Apps teilst du sogar Teile des Codes. Das nennt man <b>Cross-Platform</b>."
+    ],
+    "terms": [
+      "backend",
+      "auth",
+      "api",
+      "crossplatform"
+    ],
+    "code": {
+      "lang": "ablauf",
+      "text": "Website (Next.js)      App (Expo / PWA)\n        \\                /\n         ↓              ↓\n        Supabase: Login, Datenbank\n        ein Konto · dieselben Daten"
+    },
+    "tip": "Plane das Datenmodell zuerst. Wenn Tabellen und Login stehen, ist eine zweite Oberfläche (App oder Website) viel schneller gebaut.",
+    "task": "Welche Daten müssten Website und App deiner Idee gemeinsam nutzen? Nenne drei (z. B. Nutzer, Bestellungen, Favoriten).",
+    "quiz": [
+      {
+        "q": "Warum ein gemeinsames Backend für Website und App?",
+        "a": [
+          "Ein Konto und dieselben Daten überall",
+          "Weil es schöner aussieht",
+          "Damit SEO besser wird"
+        ],
+        "c": 0,
+        "why": "Kunden registrieren sich einmal, Daten sind überall gleich."
+      },
+      {
+        "q": "Was bedeutet Cross-Platform?",
+        "a": [
+          "Ein Code oder Werkzeug für mehrere Plattformen",
+          "Eine Zahlungsart",
+          "Ein Cookie-Banner"
+        ],
+        "c": 0,
+        "why": "Zum Beispiel eine App, die aus einer Codebasis für iOS und Android entsteht."
+      }
+    ]
+  },
+  "tools-plus": {
+    "title": "Shop, Newsletter & Co.: welche Tools wann?",
+    "min": 12,
+    "intro": [
+      "Nicht alles baust du selbst. Für Inhalte, die sich oft ändern (Blog, Ratgeber), gibt es ein <b>CMS</b> (Content-Management-System) wie WordPress, Sanity oder Storyblok.",
+      "Für Verkäufe nimmst du Shopify (kompletter Shop) oder Stripe (Bezahlung in deiner eigenen App). Für E-Mails an Kunden einen <b>Newsletter</b>-Dienst wie Brevo oder Mailchimp.",
+      "Bei Newslettern ist in Deutschland das <b>Double-Opt-in</b> üblich: Nach der Anmeldung bestätigt die Person ihre Adresse per Link. So weist du die Einwilligung nach."
+    ],
+    "terms": [
+      "cms",
+      "newsletter",
+      "doubleoptin",
+      "stripe"
+    ],
+    "code": {
+      "lang": "übersicht",
+      "text": "Inhalte pflegen     → CMS (WordPress, Sanity)\nProdukte verkaufen  → Shopify oder Stripe\nE-Mails & Newsletter→ Brevo, Mailchimp\nTermine buchen      → Cal.com, Calendly\nMessen              → Plausible, Matomo"
+    },
+    "tip": "Jedes Tool kostet Geld, Zeit und Datenschutz-Aufwand. Nimm nur, was dein MVP wirklich braucht.",
+    "task": "Stelle deinen Tool-Stack zusammen: Welche 3 Tools braucht deine Idee am Anfang wirklich, und welches kommt erst später?",
+    "quiz": [
+      {
+        "q": "Wofür ist ein CMS gut?",
+        "a": [
+          "Inhalte ohne Programmieren pflegen",
+          "Kartendaten speichern",
+          "Apps im Store veröffentlichen"
+        ],
+        "c": 0,
+        "why": "Texte und Bilder ändern, ohne den Code anzufassen."
+      },
+      {
+        "q": "Was ist ein Double-Opt-in?",
+        "a": [
+          "Anmeldung plus Bestätigung per E-Mail-Link",
+          "Zwei Newsletter pro Woche",
+          "Ein doppelter Login"
+        ],
+        "c": 0,
+        "why": "So ist nachweisbar, dass die Person wirklich zugestimmt hat."
+      }
+    ]
+  },
+  "store-app": {
+    "title": "Vom Web in den App Store",
+    "min": 15,
+    "intro": [
+      "Eine PWA reicht oft lange. Eine App im Store lohnt sich, wenn du <b>Push-Nachrichten</b>, Kamera, Bluetooth oder Offline-Nutzung brauchst, oder wenn Kunden dich im Store suchen.",
+      "Zwei Wege: Mit <b>Capacitor</b> verpackst du deine bestehende Web-App als App. Mit <b>Expo</b> (React Native) baust du eine echte native App und nutzt dein React-Wissen.",
+      "Für den <b>App Store</b> brauchst du ein Apple-Entwicklerkonto (jährliche Gebühr), für Google Play ein Konto mit einmaliger Gebühr. Jede App wird vor der Veröffentlichung geprüft und braucht eine Datenschutzerklärung."
+    ],
+    "terms": [
+      "capacitor",
+      "expo",
+      "pushnotification",
+      "appstore"
+    ],
+    "code": {
+      "lang": "ablauf",
+      "text": "1. Web-App läuft stabil (PWA)\n2. Login + Daten in Supabase\n3. Capacitor oder Expo wählen\n4. Entwicklerkonten anlegen\n5. Testversion (TestFlight / interner Test)\n6. Prüfung durch Apple / Google → live"
+    },
+    "tip": "Erst Web-App stabil, dann Backend, dann Store. Sonst baust du zweimal.",
+    "task": "Braucht deine Idee wirklich eine Store-App? Liste die Handy-Funktionen auf, die eine PWA nicht kann, und entscheide.",
+    "quiz": [
+      {
+        "q": "Was macht Capacitor?",
+        "a": [
+          "Verpackt eine Web-App als Store-App",
+          "Verschickt Newsletter",
+          "Ist eine Datenbank"
+        ],
+        "c": 0,
+        "why": "Dein Web-Code läuft in einer App-Hülle, die in den Store kann."
+      },
+      {
+        "q": "Wann lohnt sich eine Store-App besonders?",
+        "a": [
+          "Wenn du Push, Kamera oder Offline brauchst",
+          "Für eine reine Landingpage",
+          "Nie"
+        ],
+        "c": 0,
+        "why": "Diese Funktionen kann eine Website nur eingeschränkt."
+      }
+    ]
   }
 };

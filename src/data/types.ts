@@ -16,7 +16,8 @@ export type Card = { t: string; s: string; a: string; e: string; w: string; r?: 
 
 export type Course = { id: string; title: string; short: string; ico: string; color: string; lessons: string[] };
 
-export type Template = { label: string; emoji: string; todos: [string, string][] };
+/** To-do: [Text, Lektion, optional passende Mission – "keine" = bewusst ohne Mission] */
+export type Template = { label: string; emoji: string; todos: [string, string, string?][] };
 
 export type MissionLevel = "play" | "ai" | "build";
 
@@ -34,6 +35,8 @@ export type Mission = {
   /** Spielerische Missionen: kurzes Quiz */
   quiz?: Quiz[];
   result?: string; // Beschriftung für das Ergebnisfeld
+  /** Besonders passend für diese Projektarten (Schlüssel aus templates.ts) */
+  types?: string[];
 };
 
 export type TrackStep = { id: string; title: string; text: string; lesson: string; missions: string[] };

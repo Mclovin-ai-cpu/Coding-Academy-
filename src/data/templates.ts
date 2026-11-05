@@ -8,7 +8,8 @@ export const TEMPLATES: Record<string, Template> = {
     "todos": [
       [
         "Ziel, Zielgruppe & wichtigste Conversion festlegen",
-        "seo"
+        "seo",
+        "zielgruppe"
       ],
       [
         "Domain auswählen und Verfügbarkeit prüfen",
@@ -35,6 +36,11 @@ export const TEMPLATES: Record<string, Template> = {
         "js"
       ],
       [
+        "Newsletter-Anmeldung einbauen (optional)",
+        "tools-plus",
+        "newsletter-doi"
+      ],
+      [
         "Impressum & Datenschutz ergänzen",
         "legal"
       ],
@@ -54,11 +60,13 @@ export const TEMPLATES: Record<string, Template> = {
     "todos": [
       [
         "Nische & Zielgruppe wählen",
-        "money"
+        "money",
+        "zielgruppe"
       ],
       [
         "Affiliate-Programme recherchieren (z. B. Amazon PartnerNet, awin)",
-        "money"
+        "money",
+        "affiliate-vergleich"
       ],
       [
         "Plattform wählen: WordPress oder eigener Code",
@@ -89,6 +97,11 @@ export const TEMPLATES: Record<string, Template> = {
         "seo"
       ],
       [
+        "Newsletter für wiederkehrende Leser einrichten",
+        "tools-plus",
+        "newsletter-doi"
+      ],
+      [
         "Veröffentlichen",
         "deploy"
       ]
@@ -112,7 +125,8 @@ export const TEMPLATES: Record<string, Template> = {
       ],
       [
         "Produktseiten & Warenkorb gestalten",
-        "css"
+        "css",
+        "produkttexte"
       ],
       [
         "AGB, Widerruf, Versand, Impressum",
@@ -142,7 +156,13 @@ export const TEMPLATES: Record<string, Template> = {
     "todos": [
       [
         "Problem & Kernfunktion beschreiben (MVP)",
-        "prompting"
+        "prompting",
+        "zielgruppe"
+      ],
+      [
+        "Planen: Was gehört auf die Website, was in die App?",
+        "ein-backend",
+        "produkt-plan"
       ],
       [
         "Stack wählen (z. B. Next.js + Supabase)",
@@ -158,7 +178,8 @@ export const TEMPLATES: Record<string, Template> = {
       ],
       [
         "Erste Funktion per Prompt bauen",
-        "vibe"
+        "vibe",
+        "keine"
       ],
       [
         "Testen & debuggen",
@@ -173,8 +194,14 @@ export const TEMPLATES: Record<string, Template> = {
         "security"
       ],
       [
+        "Entscheiden: PWA reicht oder Store-App?",
+        "store-app",
+        "store-check"
+      ],
+      [
         "Als PWA installierbar machen",
-        "pwa"
+        "pwa",
+        "keine"
       ],
       [
         "Mit Vercel veröffentlichen",
@@ -193,6 +220,11 @@ export const TEMPLATES: Record<string, Template> = {
       [
         "Idee in einem Satz beschreiben",
         "vibe"
+      ],
+      [
+        "Website, App oder beides? Einordnen",
+        "website-vs-app",
+        "website-oder-app"
       ],
       [
         "Passenden Weg wählen (No-Code, KI-Builder, Code)",

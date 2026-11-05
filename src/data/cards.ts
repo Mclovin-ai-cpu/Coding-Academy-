@@ -950,5 +950,136 @@ export const CARDS: Record<string, Card> = {
       "ladezeit",
       "lighthouse"
     ]
+  },
+  "website": {
+    "t": "Website",
+    "s": "Seiten, die informieren und überzeugen, meist ohne Login.",
+    "a": "Das Schaufenster und der Verkaufsprospekt deines Geschäfts.",
+    "e": "Landingpage, Blog, Firmenseite",
+    "w": "Bringt neue Kunden über Google und Werbung.",
+    "r": [
+      "webapp",
+      "native",
+      "retention",
+      "seo",
+      "conversion"
+    ]
+  },
+  "retention": {
+    "t": "Retention",
+    "s": "Wie viele Nutzer nach einiger Zeit wiederkommen.",
+    "a": "Die Stammkunden-Quote deines Cafés.",
+    "e": "Von 100 neuen Nutzern sind nach 30 Tagen noch 25 aktiv.",
+    "w": "Apps verdienen an wiederkehrenden Nutzern, nicht an Downloads.",
+    "r": [
+      "website",
+      "webapp",
+      "native",
+      "pushnotification"
+    ]
+  },
+  "crossplatform": {
+    "t": "Cross-Platform",
+    "s": "Ein Code oder Werkzeug für mehrere Plattformen.",
+    "a": "Ein Rezept, das in jeder Küche funktioniert.",
+    "e": "Expo baut aus einem Code eine iOS- und eine Android-App.",
+    "w": "Spart Zeit und Geld, wenn du Website und Apps anbietest.",
+    "r": [
+      "backend",
+      "auth",
+      "api"
+    ]
+  },
+  "cms": {
+    "t": "CMS",
+    "s": "Content-Management-System: Inhalte pflegen ohne Programmieren.",
+    "a": "Ein Redaktionsbüro mit Formularen statt Druckerei.",
+    "e": "WordPress, Sanity, Storyblok",
+    "w": "Du oder dein Team ändern Texte selbst, ohne Entwickler.",
+    "r": [
+      "newsletter",
+      "doubleoptin",
+      "stripe",
+      "website",
+      "seo"
+    ]
+  },
+  "newsletter": {
+    "t": "Newsletter-Dienst",
+    "s": "Werkzeug zum Verwalten von Kontakten und Versenden von E-Mails.",
+    "a": "Ein Postversand mit Adressbuch und Statistik.",
+    "e": "Brevo, Mailchimp, Resend",
+    "w": "E-Mail ist ein eigener Kanal, unabhängig von Google und Social Media.",
+    "r": [
+      "cms",
+      "doubleoptin",
+      "stripe",
+      "dsgvo"
+    ]
+  },
+  "doubleoptin": {
+    "t": "Double-Opt-in",
+    "s": "Anmeldung plus Bestätigung per E-Mail-Link.",
+    "a": "Wie eine Unterschrift unter dem Anmeldeformular.",
+    "e": "„Bitte bestätige deine Anmeldung“ mit Link",
+    "w": "Belegt die Einwilligung und schützt vor Fake-Anmeldungen.",
+    "r": [
+      "cms",
+      "newsletter",
+      "stripe",
+      "dsgvo"
+    ]
+  },
+  "capacitor": {
+    "t": "Capacitor",
+    "s": "Werkzeug, das eine Web-App als Store-App verpackt.",
+    "a": "Ein Umzugskarton, in dem deine Website in den App Store passt.",
+    "e": "Diese Academy könnte so als iPhone-App erscheinen.",
+    "w": "Schnellster Weg in den Store mit vorhandenem Code.",
+    "r": [
+      "expo",
+      "pushnotification",
+      "appstore",
+      "pwa"
+    ]
+  },
+  "expo": {
+    "t": "Expo",
+    "s": "Plattform zum Bauen nativer Apps mit React Native.",
+    "a": "Ein Baukasten für echte Handy-Apps mit React-Bausteinen.",
+    "e": "Eine App mit Kamera und Push für iOS und Android",
+    "w": "Fühlt sich am nativsten an und nutzt dein React-Wissen.",
+    "r": [
+      "capacitor",
+      "pushnotification",
+      "appstore",
+      "react",
+      "native"
+    ]
+  },
+  "pushnotification": {
+    "t": "Push-Nachricht",
+    "s": "Mitteilung, die eine App aufs Handy schickt, auch wenn sie zu ist.",
+    "a": "Die Türklingel deiner App.",
+    "e": "„Deine Lernserie endet heute – 5 Minuten?“",
+    "w": "Stärkster Hebel für Retention, aber sparsam einsetzen.",
+    "r": [
+      "capacitor",
+      "expo",
+      "appstore"
+    ]
+  },
+  "appstore": {
+    "t": "App Store / Google Play",
+    "s": "Die offiziellen Läden für Handy-Apps.",
+    "a": "Das Kaufhaus mit Türsteher: Jede App wird vorher geprüft.",
+    "e": "Apple Developer Program, Google Play Console",
+    "w": "Kosten, Prüfung und Regeln früh einplanen.",
+    "r": [
+      "capacitor",
+      "expo",
+      "pushnotification",
+      "native"
+    ]
   }
 };

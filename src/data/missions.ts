@@ -129,7 +129,59 @@ export const MISSIONS: Mission[] = [
   { id: "lighthouse", level: "build", title: "Ladezeit & Barrierefreiheit messen", min: 15, xp: 60, lesson: "qualitaet",
     intro: "Miss deine Seite mit Lighthouse und behebe den größten Punkt.",
     steps: ["Seite in Chrome öffnen → Entwicklertools → Lighthouse", "Analyse für Mobil starten", "Die drei wichtigsten Hinweise notieren", "Einen davon mit Claude beheben und neu messen"],
-    result: "Deine Punkte vorher → nachher" }
+    result: "Deine Punkte vorher → nachher" },
+
+  // ---------- Website, App oder beides ----------
+  { id: "website-oder-app", level: "play", title: "Website oder App?", min: 5, xp: 15, lesson: "website-vs-app",
+    intro: "Vier Ideen, vier Entscheidungen: Womit startest du am besten?",
+    steps: ["Szenario lesen", "Start wählen", "Begründung vergleichen"],
+    quiz: [
+      { q: "Ein Fahrradladen will mehr Werkstatt-Termine über Google bekommen.", a: ["Website mit Terminbuchung", "App im Store", "Nur ein Newsletter"], c: 0, why: "Neue Kunden suchen über Google: Website zuerst." },
+      { q: "Kunden sollen täglich ihren Trainingsplan abhaken.", a: ["Web-App oder App mit Login", "Reine Landingpage", "PDF zum Download"], c: 0, why: "Tägliche Nutzung und gespeicherte Daten brauchen eine App mit Login." },
+      { q: "Fahrer sollen Erinnerungen bekommen, wenn die Wartung fällig ist, auch ohne die App zu öffnen.", a: ["App mit Push-Nachrichten", "Blog", "Impressum"], c: 0, why: "Push-Nachrichten sind die Stärke von Store-Apps." },
+      { q: "Ein Abo-Dienst braucht Neukunden und eine Kundenverwaltung.", a: ["Website + App mit einem Backend", "Zwei getrennte Logins", "Nur Social Media"], c: 0, why: "Website gewinnt Kunden, App hält sie, ein Backend verbindet beides." }
+    ]},
+  { id: "produkt-plan", level: "ai", title: "Website und App gemeinsam planen", min: 20, xp: 40, lesson: "ein-backend",
+    intro: "Lass Claude einen Plan erstellen, wie Website und App deiner Idee zusammenspielen.",
+    steps: ["Prompt anpassen", "Plan prüfen: Was ist MVP, was kommt später?", "Den Plan im Projekt speichern"],
+    prompt: "Meine Idee: {idee}\n\nPlane, wie Website und App zusammenspielen:\n- Was gehört auf die Website (gefunden werden, überzeugen)?\n- Was gehört in die App (wiederkommen, nutzen)?\n- Welche Daten teilen beide (ein Backend, z. B. Supabase)?\n- Was ist das kleinste MVP, und in welcher Reihenfolge baue ich?\nAntworte in Stichpunkten.",
+    result: "Dein Plan in Stichpunkten", types: ["webapp", "free"] },
+  { id: "tool-auswahl", level: "ai", title: "Deinen Tool-Stack zusammenstellen", min: 15, xp: 40, lesson: "tools-plus",
+    intro: "Finde heraus, welche Tools deine Idee wirklich braucht und was sie kosten.",
+    steps: ["Prompt anpassen", "Liste auf das MVP kürzen", "Ergebnis speichern"],
+    prompt: "Meine Idee: {idee}\n\nStelle mir einen Tool-Stack zusammen (CMS, Shop/Zahlung, Newsletter, Analytics, Hosting, Login).\nZu jedem Tool: wofür, ungefähre monatliche Kosten am Anfang, DSGVO-Hinweis.\nMarkiere, was ich für ein MVP sofort brauche und was später kommt.",
+    result: "Deine 3 Start-Tools", types: ["shop", "affiliate", "landing"] },
+  { id: "newsletter-doi", level: "build", title: "Newsletter mit Double-Opt-in einrichten", min: 30, xp: 80, lesson: "tools-plus",
+    intro: "Richte einen kostenlosen Newsletter-Dienst ein und teste die Anmeldung.",
+    steps: ["Bei einem Newsletter-Dienst (z. B. Brevo) ein Konto anlegen", "Ein Anmeldeformular mit Double-Opt-in erstellen", "Formular auf deiner Seite einbinden (Prompt: „Binde dieses Formular ein“)", "Mit deiner eigenen Adresse anmelden und die Bestätigungsmail prüfen"],
+    result: "Kam die Bestätigungsmail an?", types: ["affiliate", "landing", "shop"] },
+  { id: "store-check", level: "ai", title: "Ist meine Idee reif für den App Store?", min: 15, xp: 40, lesson: "store-app",
+    intro: "Prüfe mit Claude, ob eine Store-App sinnvoll ist oder eine PWA reicht.",
+    steps: ["Prompt anpassen", "Pro und Contra lesen", "Entscheidung speichern"],
+    prompt: "Meine Idee: {idee}\n\nBrauche ich eine App im App Store / Google Play, oder reicht eine PWA?\nPrüfe: Push-Nachrichten, Kamera, Offline, Auffindbarkeit im Store, Kosten (Entwicklerkonten), Aufwand.\nWenn Store: Capacitor oder Expo, und warum? Kurze Empfehlung am Ende.",
+    result: "Deine Entscheidung und warum", types: ["webapp"] },
+
+  // ---------- Speziell für Projektarten ----------
+  { id: "hero-text", level: "ai", title: "Hero-Text und Nutzenversprechen", min: 15, xp: 40, lesson: "ux",
+    intro: "Der erste Bildschirm entscheidet, ob Besucher bleiben. Formuliere ihn mit Claude.",
+    steps: ["Prompt anpassen", "Beste Variante wählen", "Text speichern"],
+    prompt: "Meine Landingpage: {idee}\nZielgruppe: [WER?]\n\nSchreibe 5 Varianten für den Hero-Bereich: Überschrift (max. 8 Wörter), Unterzeile (max. 20 Wörter), Button-Text.\nJede Variante mit einem anderen Nutzen im Fokus.",
+    result: "Deine Überschrift, Unterzeile und Button", types: ["landing", "free"] },
+  { id: "affiliate-vergleich", level: "ai", title: "Vergleichsartikel aufbauen", min: 20, xp: 40, lesson: "money",
+    intro: "Vergleichsartikel sind das Herz einer Affiliate-Seite. Plane deinen ersten.",
+    steps: ["Prompt anpassen", "Gliederung prüfen", "Gliederung speichern"],
+    prompt: "Meine Affiliate-Seite: {idee}\n\nErstelle die Gliederung für einen Vergleichsartikel zu [PRODUKTGRUPPE]:\n- Suchbegriff und Suchabsicht\n- Vergleichstabelle mit 5 Kriterien\n- Abschnitte für 3–5 Produkte\n- Kennzeichnung der Affiliate-Links als Werbung\n- Fazit mit Empfehlung je Zielgruppe",
+    result: "Deine Gliederung", types: ["affiliate"] },
+  { id: "produkttexte", level: "ai", title: "Produktseite texten", min: 15, xp: 40, lesson: "seo",
+    intro: "Gute Produktseiten verkaufen und werden gefunden. Schreib deine erste mit Claude.",
+    steps: ["Prompt anpassen", "Text auf Kundensprache prüfen", "Speichern"],
+    prompt: "Mein Shop: {idee}\nProdukt: [NAME, 3 Merkmale, Preis]\n\nSchreibe eine Produktseite: Titel (SEO), 3 Nutzen-Stichpunkte, Beschreibung (max. 120 Wörter), 3 häufige Fragen mit Antworten, meta description (max. 155 Zeichen).",
+    result: "Dein Produkttext oder Link", types: ["shop"] },
+  { id: "datenmodell", level: "ai", title: "Datenmodell deiner App skizzieren", min: 20, xp: 40, lesson: "supabase",
+    intro: "Bevor du baust: Welche Tabellen braucht deine App?",
+    steps: ["Prompt anpassen", "Tabellen auf das MVP kürzen", "Datenmodell speichern"],
+    prompt: "Meine App: {idee}\n\nSchlage ein Datenmodell für Supabase vor: Tabellen, Spalten mit Typ, Beziehungen.\nNenne für jede Tabelle eine Row-Level-Security-Regel in einem Satz.\nHalte es beim MVP: höchstens 4 Tabellen.",
+    result: "Deine Tabellen und Spalten", types: ["webapp"] },
 ];
 
 export const MISSION_BY_ID: Record<string, Mission> = Object.fromEntries(MISSIONS.map((m) => [m.id, m]));
@@ -138,6 +190,20 @@ export const MISSION_BY_ID: Record<string, Mission> = Object.fromEntries(MISSION
 export function missionForLesson(lesson: string): Mission | undefined {
   const list = MISSIONS.filter((m) => m.lesson === lesson);
   return list.find((m) => m.level === "ai") || list.find((m) => m.level === "build") || list[0];
+}
+
+/** Projektbezogene Praxis: Missionen aus den offenen To-dos und passend zur Projektart */
+export function missionsForProject(p: { type: string; todos: { text: string; lesson: string; mission?: string; done: boolean }[] }) {
+  const seen = new Set<string>();
+  const fromTodos: { mission: Mission; todo: string }[] = [];
+  for (const t of p.todos) {
+    if (t.done || !t.mission || seen.has(t.mission) || !MISSION_BY_ID[t.mission]) continue;
+    seen.add(t.mission);
+    fromTodos.push({ mission: MISSION_BY_ID[t.mission], todo: t.text });
+  }
+  const forType = MISSIONS.filter((m) => m.types?.includes(p.type) && !seen.has(m.id));
+  forType.forEach((m) => seen.add(m.id));
+  return { fromTodos, forType, ids: seen };
 }
 
 export const TRACK: TrackStep[] = [

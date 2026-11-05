@@ -69,11 +69,11 @@ function ProjectForm({ onClose, project }: { onClose: () => void; project?: Proj
     }
     const np: Project = {
       id: uid(), name: n, idea: idea.trim(), type, created: today(), notes: [],
-      todos: TEMPLATES[type].todos.map(([text, lesson]) => ({ id: uid(), text, lesson, mission: missionForLesson(lesson)?.id, done: false, stuck: false }))
+      todos: TEMPLATES[type].todos.map(([text, lesson, mission]) => ({ id: uid(), text, lesson, mission: mission === "keine" ? undefined : mission || missionForLesson(lesson)?.id, done: false, stuck: false }))
     };
     update((d) => { d.projects.unshift(np); d.activeProject = np.id; });
     onClose();
-    addXP(20, "Projekt angelegt");
+    addXP(20, "Projekt angelegt · Missionen in Praxis");
     setTimeout(checkBadges, 0);
     go("projekte/" + np.id);
   };

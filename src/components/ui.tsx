@@ -138,7 +138,7 @@ export function CodeBlock({ lang, text, action }: { lang: string; text: string; 
 }
 
 /** Eine Quizfrage mit Antwortoptionen. onAnswer(firstTry) wird bei richtiger Antwort aufgerufen. */
-export function QuizQuestion({ q, onCorrect }: { q: Quiz; onCorrect: (firstTry: boolean) => void }) {
+export function QuizQuestion({ q, onCorrect, help }: { q: Quiz; onCorrect: (firstTry: boolean) => void; help?: { label: string; onClick: () => void } }) {
   const [wrong, setWrong] = useState<number | null>(null);
   const [tries, setTries] = useState(0);
   const [right, setRight] = useState(false); // Zurücksetzen per key={…} beim Aufrufer
@@ -166,7 +166,15 @@ export function QuizQuestion({ q, onCorrect }: { q: Quiz; onCorrect: (firstTry: 
       {right ? (
         <div className="view-in mt-3 rounded-2xl bg-ok-soft p-3.5 text-[15px]"><b>Richtig!</b> {q.why}</div>
       ) : wrong !== null ? (
-        <div className="view-in mt-3 rounded-2xl bg-err-soft p-3.5 text-[15px]"><b>Noch nicht.</b> Versuch es nochmal, du schaffst das.</div>
+        <div className="view-in mt-3 rounded-2xl bg-err-soft p-3.5 text-[15px]">
+          <b>Noch nicht.</b> Versuch es nochmal, du schaffst das.
+          {help && (
+            <button className="tap mt-2.5 flex w-full flex-col rounded-xl border border-line bg-surface px-3 py-2.5 text-left text-[13px]" onClick={help.onClick}>
+              <span className="font-semibold text-accent-text">Zur Lektion: {help.label}</span>
+              <span className="text-muted">Danach kommst du hierher zurück.</span>
+            </button>
+          )}
+        </div>
       ) : null}
     </div>
   );
