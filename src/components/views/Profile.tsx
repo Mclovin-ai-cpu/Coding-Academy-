@@ -4,6 +4,10 @@ import { useRef, useState } from "react";
 import { useApp } from "@/lib/app";
 import { BADGES, doneCount, fresh, level, levelPct, normalize, streak, today } from "@/lib/state";
 import { Bar, Label } from "../ui";
+import { Dashboard } from "../Dashboard";
+import { CARDS } from "@/data/cards";
+import { MISSIONS } from "@/data/missions";
+import { ALL } from "@/lib/state";
 
 export function Profile() {
   const { s, update, toast, go } = useApp();
@@ -12,9 +16,10 @@ export function Profile() {
   const learned = Object.values(s.cards).filter((c) => c.box >= 2).length;
   const missions = Object.values(s.missions).filter((m) => m.done).length;
 
+  const todosAll = s.projects.flatMap((p) => p.todos);
   const stats: [string | number, string][] = [
-    [streak(s), "Tage Serie"], [doneCount(s), "Lektionen"], [learned, "Karten sicher"],
-    [missions, "Missionen"], [s.projects.length, "Projekte"], [s.todosDone, "To-dos"]
+    [streak(s), "Tage Serie"], [`${doneCount(s)}/${ALL.length}`, "Lektionen"], [`${learned}/${Object.keys(CARDS).length}`, "Karten sicher"],
+    [`${missions}/${MISSIONS.length}`, "Missionen"], [s.projects.length, "Projekte"], [`${todosAll.filter((t) => t.done).length}/${todosAll.length}`, "To-dos fertig"]
   ];
 
   return (
@@ -27,10 +32,12 @@ export function Profile() {
         <span className="text-[13px] text-code-muted">{200 - (s.xp % 200)} XP bis Level {level(s) + 1}</span>
       </section>
 
+      <Dashboard />
+
       <div className="grid grid-cols-3 gap-2.5">
         {stats.map(([v, l]) => (
           <div key={l} className="card rounded-2xl px-2.5 py-3 text-center">
-            <div className="font-mono text-[21px] font-bold">{v}</div>
+            <div className="font-mono text-[17px] font-bold">{v}</div>
             <div className="text-xs text-muted">{l}</div>
           </div>
         ))}
@@ -93,7 +100,7 @@ export function Profile() {
           }}>{sure ? "Sicher?" : "Reset"}</button>
         </div>
       </div>
-      <Label className="justify-center">Coding Academy · Version 3.6 Test</Label>
+      <Label className="justify-center">Coding Academy · Version 3.7 Test</Label>
     </div>
   );
 }

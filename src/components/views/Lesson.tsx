@@ -11,10 +11,12 @@ import { Bar, CodeBlock, Label, QuizQuestion, Tag, TermChip } from "../ui";
 const STEP_NAMES = ["lernen", "beispiel", "übung", "quiz"];
 
 export function LessonView({ id }: { id: string }) {
-  const { s, go, update, addXP, toast, checkBadges, confetti, returnTo, setReturnTo } = useApp();
-  // Kommt man aus einer Praxis-Mission, führt der Weg danach dorthin zurück
-  const back = returnTo && returnTo.lesson === id ? returnTo : null;
-  const goBack = () => { const r = back!.route; setReturnTo(null); go(r); };
+  const { s, go, update, addXP, toast, checkBadges, confetti, backFor, goBack: popBack, goVia } = useApp();
+  // Kam man aus Projekt, Mission oder Lernpfad, führt der Weg genau dorthin zurück
+  const back = backFor("lernen/" + id);
+  const goBack = () => popBack();
+  const backText = back ? (back.kind === "Mission" ? `Zurück zur Mission „${back.label}“` : back.kind === "Projekt" ? `Zurück zum Projekt „${back.label}“` : back.kind === "Lernpfad" ? "Zurück zum Lernpfad" : "Zurück") : "";
+  const showBanner = back && (back.kind === "Mission" || back.kind === "Projekt");
   const L = LESSONS[id];
   const c = courseOf(id);
   const mission = missionForLesson(id);
@@ -75,17 +77,17 @@ export function LessonView({ id }: { id: string }) {
               <div><b>Abzeichen: {b.t}</b><div className="text-[13px] text-muted">Neu freigeschaltet</div></div>
             </div>
           ))}
-          {mission && !back && !s.missions[mission.id]?.done && (
-            <button onClick={() => go("praxis/" + mission.id)} className="tap mt-1.5 flex w-full items-center gap-2.5 rounded-2xl border border-dashed border-line px-3.5 py-3 text-left text-sm">
+          {mission && !showBanner && !s.missions[mission.id]?.done && (
+            <button onClick={() => goVia("praxis/" + mission.id, { label: L.title, kind: "Lernpfad" })} className="tap mt-1.5 flex w-full items-center gap-2.5 rounded-2xl border border-dashed border-line px-3.5 py-3 text-left text-sm">
               <span className="text-accent-text"><Icon name="tool" /></span>
               <span className="flex-1">Optional: Mission „{mission.title}“</span>
               <span className="font-mono text-[11px] text-ok">+{mission.xp} XP</span>
             </button>
           )}
           <div className="mt-5 grid gap-3">
-            {back && <button className="btn-primary" onClick={goBack}><Icon name="back" size={18} /> Zurück zur Mission „{back.label}“</button>}
-            {nx && <button className={back ? "btn-ghost" : "btn-primary"} onClick={() => { setReturnTo(null); go("lernen/" + nx); }}>Nächste Lektion <Icon name="arrow" size={18} /></button>}
-            <button className="btn-ghost" onClick={() => { setReturnTo(null); go("lernen"); }}>Zum Lernpfad</button>
+            {showBanner && <button className="btn-primary" onClick={goBack}><Icon name="back" size={18} /> {backText}</button>}
+            {nx && <button className={showBanner ? "btn-ghost" : "btn-primary"} onClick={() => go("lernen/" + nx)}>Nächste Lektion <Icon name="arrow" size={18} /></button>}
+            <button className="btn-ghost" onClick={() => (back?.kind === "Lernpfad" ? goBack() : go("lernen"))}>Zum Lernpfad</button>
           </div>
         </div>
       </div>
@@ -96,17 +98,17 @@ export function LessonView({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-3 pt-[env(safe-area-inset-top)]">
       <div className="flex items-center gap-3">
-        <button aria-label={back ? `Zurück zur Mission ${back.label}` : "Lektion schließen"} onClick={() => (back ? goBack() : go("lernen"))} className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-line bg-surface"><Icon name={back ? "back" : "x"} size={18} /></button>
+        <button aria-label={back ? backText : "Lektion schließen"} onClick={() => (back ? goBack() : go("lernen"))} className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-line bg-surface"><Icon name={showBanner ? "back" : "x"} size={18} /></button>
         <div className="grid flex-1 grid-cols-4 gap-1.5" aria-label={`Schritt ${step + 1} von 4`}>
           {[0, 1, 2, 3].map((i) => <div key={i} className={`h-1.5 rounded-full transition-colors ${i < step ? "bg-ok" : i === step ? "bg-accent" : "bg-surface2"}`} />)}
         </div>
         <Tag tone="acc">{c.short}</Tag>
       </div>
 
-      {back && (
+      {showBanner && back && (
         <button onClick={goBack} className="tap flex items-center gap-2.5 rounded-2xl bg-accent-soft px-3.5 py-2.5 text-left text-sm text-accent-text">
-          <Icon name="tool" size={18} />
-          <span className="flex-1">Du kommst aus der Mission <b>„{back.label}“</b>. Nach der Lektion geht es dorthin zurück.</span>
+          <Icon name={back.kind === "Projekt" ? "folder" : "tool"} size={18} />
+          <span className="flex-1">Du kommst {back.kind === "Projekt" ? "aus dem Projekt" : "aus der Mission"} <b>„{back.label}“</b>. Nach der Lektion geht es dorthin zurück.</span>
           <span className="font-semibold">Zurück</span>
         </button>
       )}
@@ -161,8 +163,8 @@ export function LessonView({ id }: { id: string }) {
         )}
       </div>
 
-      {step === 0 && mission && (
-        <button onClick={() => go("praxis/" + mission.id)} className="tap flex items-center gap-2.5 rounded-2xl border border-dashed border-line px-3.5 py-3 text-left text-sm">
+      {step === 0 && mission && !showBanner && (
+        <button onClick={() => goVia("praxis/" + mission.id, { label: L.title, kind: "Lernpfad" })} className="tap flex items-center gap-2.5 rounded-2xl border border-dashed border-line px-3.5 py-3 text-left text-sm">
           <span className="text-accent-text"><Icon name="tool" /></span>
           <span className="flex-1">Optional: Mission „{mission.title}“</span>
           <span className="font-mono text-[11px] text-ok">{s.missions[mission.id]?.done ? "erledigt" : `+${mission.xp} XP`}</span>

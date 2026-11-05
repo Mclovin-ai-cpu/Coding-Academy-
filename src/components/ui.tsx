@@ -183,3 +183,32 @@ export function QuizQuestion({ q, onCorrect, help }: { q: Quiz; onCorrect: (firs
 export async function copyText(text: string, toast: (m: string) => void, ok = "Kopiert") {
   try { await navigator.clipboard.writeText(text); toast(ok); } catch { toast("Kopieren nicht möglich"); }
 }
+
+/* ---------- Ein- und ausklappbarer Bereich (Zustand wird pro Gerät gemerkt) ---------- */
+const UI_KEY = "codingAcademy.ui";
+function readOpen(id: string, fallback: boolean) {
+  try { const v = JSON.parse(localStorage.getItem(UI_KEY) || "{}")[id]; return typeof v === "boolean" ? v : fallback; } catch { return fallback; }
+}
+function writeOpen(id: string, v: boolean) {
+  try { const o = JSON.parse(localStorage.getItem(UI_KEY) || "{}"); o[id] = v; localStorage.setItem(UI_KEY, JSON.stringify(o)); } catch {}
+}
+
+export function Collapse({ id, title, sub, meta, defaultOpen = false, children, tone = "card" }: {
+  id: string; title: ReactNode; sub?: ReactNode; meta?: ReactNode; defaultOpen?: boolean; children: ReactNode; tone?: "card" | "plain";
+}) {
+  const [open, setOpen] = useState(() => readOpen(id, defaultOpen));
+  const toggle = () => { setOpen(!open); writeOpen(id, !open); };
+  return (
+    <section className={tone === "card" ? "card overflow-hidden" : ""}>
+      <button onClick={toggle} aria-expanded={open} className={`tap flex w-full items-center gap-3 text-left ${tone === "card" ? "px-4 py-3.5" : "py-2"}`}>
+        <span className="min-w-0 flex-1">
+          <b className="block text-[16px] leading-snug">{title}</b>
+          {sub && <span className="block text-[13px] text-muted">{sub}</span>}
+        </span>
+        {meta && <span className="flex-none font-mono text-[13px] font-bold">{meta}</span>}
+        <span className={`flex-none text-muted transition-transform ${open ? "rotate-90" : ""}`}><Icon name="arrow" size={18} /></span>
+      </button>
+      {open && <div className={`view-in flex flex-col gap-2 ${tone === "card" ? "border-t border-line px-4 pb-4 pt-3" : "pb-2"}`}>{children}</div>}
+    </section>
+  );
+}

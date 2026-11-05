@@ -19,13 +19,17 @@ type Ctx = {
   openTerm: (id: string | null) => void;
   confetti: () => void;
   migrated: boolean;
-  /** Rückweg aus einer Lektion zur Praxis-Mission, von der man gekommen ist */
-  returnTo: ReturnTo | null;
-  setReturnTo: (r: ReturnTo | null) => void;
+  /** Zu einer Seite wechseln und sich merken, wohin es danach zurückgeht (inkl. Scroll-Position) */
+  goVia: (target: string, from: { label: string; kind: BackKind }) => void;
+  /** Rückweg für die aktuelle Seite, falls man über goVia hierher kam */
+  backFor: (target: string) => BackEntry | null;
+  goBack: () => void;
+  clearBack: () => void;
 };
 
-export type ReturnTo = { route: string; label: string; lesson: string };
-const RT_KEY = "codingAcademy.returnTo";
+export type BackKind = "Projekt" | "Mission" | "Praxis" | "Lernpfad" | "Karten";
+export type BackEntry = { route: string; target: string; label: string; kind: BackKind; scroll: number };
+const RT_KEY = "codingAcademy.backStack";
 
 const AppCtx = createContext<Ctx | null>(null);
 export const useApp = () => useContext(AppCtx)!;
@@ -42,10 +46,13 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
   const [route, setRoute] = useState("home");
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [term, setTerm] = useState<string | null>(null);
-  const [returnTo, setReturnToState] = useState<ReturnTo | null>(null);
-  const setReturnTo = useCallback((r: ReturnTo | null) => {
-    setReturnToState(r);
-    try { if (r) sessionStorage.setItem(RT_KEY, JSON.stringify(r)); else sessionStorage.removeItem(RT_KEY); } catch {}
+  const [stack, setStackState] = useState<BackEntry[]>([]);
+  const stackRef = useRef<BackEntry[]>([]);
+  const pendingScroll = useRef<number | null>(null);
+  const setStack = useCallback((st: BackEntry[]) => {
+    stackRef.current = st.slice(-10);
+    setStackState(stackRef.current);
+    try { sessionStorage.setItem(RT_KEY, JSON.stringify(stackRef.current)); } catch {}
   }, []);
   const toastT = useRef<ReturnType<typeof setTimeout> | null>(null);
   const ref = useRef<State | null>(null);
@@ -59,8 +66,15 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
     setS(state);
     setMigrated(migrated);
     setRoute(readHash());
-    try { const r = sessionStorage.getItem(RT_KEY); if (r) setReturnToState(JSON.parse(r)); } catch {}
-    const onHash = () => { setRoute(readHash()); window.scrollTo({ top: 0 }); };
+    try { const r = sessionStorage.getItem(RT_KEY); if (r) { stackRef.current = JSON.parse(r); setStackState(stackRef.current); } } catch {}
+    const onHash = () => {
+      setRoute(readHash());
+      const y = pendingScroll.current;
+      pendingScroll.current = null;
+      if (y == null) window.scrollTo({ top: 0 });
+      // Mehrfach versuchen, bis die Seite fertig aufgebaut und hoch genug ist
+      else [30, 150, 400].forEach((ms) => setTimeout(() => { if (Math.abs(window.scrollY - y) > 4) window.scrollTo({ top: y }); }, ms));
+    };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
@@ -117,6 +131,23 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
     else window.location.hash = h;
   }, []);
 
+  const goVia = useCallback((target: string, from: { label: string; kind: BackKind }) => {
+    setStack([...stackRef.current, { route: readHash(), target, label: from.label, kind: from.kind, scroll: window.scrollY }]);
+    go(target);
+  }, [go, setStack]);
+  const backFor = useCallback((target: string) => {
+    const top = stack[stack.length - 1];
+    return top && top.target === target ? top : null;
+  }, [stack]);
+  const goBack = useCallback(() => {
+    const top = stackRef.current[stackRef.current.length - 1];
+    if (!top) return;
+    setStack(stackRef.current.slice(0, -1));
+    pendingScroll.current = top.scroll;
+    go(top.route);
+  }, [go, setStack]);
+  const clearBack = useCallback(() => setStack([]), [setStack]);
+
   const confetti = useCallback(() => {
     const cols = ["#4f46e5", "#15803d", "#f59e0b", "#be185d", "#0e7490"];
     for (let i = 0; i < 60; i++) {
@@ -133,12 +164,12 @@ export function AppProvider({ children }: { children: (ready: boolean) => ReactN
 
   if (!s) return <>{children(false)}</>;
   return (
-    <AppCtx.Provider value={{ s, update, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated, returnTo, setReturnTo }}>
+    <AppCtx.Provider value={{ s, update, addXP, checkBadges, toggleFlag, route, go, toast, term, openTerm: setTerm, confetti, migrated, goVia, backFor, goBack, clearBack }}>
       {children(true)}
       <div
         role="status"
         aria-live="polite"
-        className={`fixed left-1/2 top-[calc(env(safe-area-inset-top)+68px)] z-[90] -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-bg transition-all duration-300 pointer-events-none ${toastMsg ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
+        className={`fixed left-1/2 top-[calc(env(safe-area-inset-top)+68px)] z-[90] -translate-x-1/2 w-max max-w-[calc(100vw-32px)] text-center rounded-[18px] bg-ink px-4 py-2.5 text-sm font-semibold text-bg transition-all duration-300 pointer-events-none ${toastMsg ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
       >
         {toastMsg}
       </div>

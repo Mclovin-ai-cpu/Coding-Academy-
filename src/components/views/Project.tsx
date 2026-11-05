@@ -28,7 +28,7 @@ function LessonSelect({ value, onChange, id }: { value: string; onChange: (v: st
 }
 
 export function ProjectView({ id }: { id: string }) {
-  const { s, go, update, addXP, toast, checkBadges, confetti } = useApp();
+  const { s, go, goVia, update, addXP, toast, checkBadges, confetti } = useApp();
   const p = s.projects.find((x) => x.id === id);
   const [edit, setEdit] = useState(false);
   const [todoEdit, setTodoEdit] = useState<Todo | null>(null);
@@ -98,9 +98,9 @@ export function ProjectView({ id }: { id: string }) {
               <div className="min-w-0 flex-1">
                 <div className={`text-[15px] ${t.done ? "line-through" : ""}`}>{t.text}</div>
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {L && <button className="rounded-lg bg-accent-soft px-2 py-[3px] font-mono text-[11px] text-accent-text" onClick={() => go("lernen/" + t.lesson)}>{short(L.title)}</button>}
+                  {L && <button className="rounded-lg bg-accent-soft px-2 py-[3px] font-mono text-[11px] text-accent-text" onClick={() => goVia("lernen/" + t.lesson, { label: p.name, kind: "Projekt" })}>{short(L.title)}</button>}
                   {M && !t.done && (
-                    <button className={`rounded-lg px-2 py-[3px] font-mono text-[11px] ${s.missions[M.id]?.done ? "bg-surface2 text-muted" : "bg-ok-soft text-ok"}`} onClick={() => { if (s.activeProject !== p.id) update((d) => { d.activeProject = p.id; }); go("praxis/" + M.id); }}>
+                    <button className={`rounded-lg px-2 py-[3px] font-mono text-[11px] ${s.missions[M.id]?.done ? "bg-surface2 text-muted" : "bg-ok-soft text-ok"}`} onClick={() => { if (s.activeProject !== p.id) update((d) => { d.activeProject = p.id; }); goVia("praxis/" + M.id, { label: p.name, kind: "Projekt" }); }}>
                       Mission: {short(M.title, 24)}{s.missions[M.id]?.done ? " ✓" : ""}
                     </button>
                   )}
@@ -132,7 +132,7 @@ export function ProjectView({ id }: { id: string }) {
             <div className="mx-0.5 mt-3 flex items-center justify-between"><h2 className="text-lg font-bold">Praxis für dieses Projekt</h2><span className="font-mono text-[13px] text-muted">{open.length} offen</span></div>
             <div className="flex flex-col gap-2">
               {open.slice(0, 3).map((m) => (
-                <button key={m.id} className="card tap flex items-center gap-3 rounded-2xl px-3.5 py-3 text-left" onClick={() => { update((d) => { d.activeProject = p.id; }); go("praxis/" + m.id); }}>
+                <button key={m.id} className="card tap flex items-center gap-3 rounded-2xl px-3.5 py-3 text-left" onClick={() => { update((d) => { d.activeProject = p.id; }); goVia("praxis/" + m.id, { label: p.name, kind: "Projekt" }); }}>
                   <span className={`grid h-10 w-10 flex-none place-items-center rounded-xl font-mono text-xs font-bold ${m.level === "play" ? "bg-warn-soft text-warn" : m.level === "ai" ? "bg-accent-soft text-accent-text" : "bg-ok-soft text-ok"}`}>{LEVELS[m.level].code}</span>
                   <span className="min-w-0 flex-1"><b className="text-[15px]">{m.title}</b><span className="block font-mono text-xs text-muted">{LEVELS[m.level].label} · {m.min} Min. · +{m.xp} XP</span></span>
                   <Icon name="arrow" size={18} />
@@ -196,7 +196,8 @@ function TodoForm({ t, onSave, onDelete }: { t: Todo; onSave: (txt: string, less
 }
 
 function StuckBody({ t, onMark, onClose, projectId }: { t: Todo; onMark: () => void; onClose: () => void; projectId: string }) {
-  const { s, go, update, openTerm } = useApp();
+  const { s, goVia, update, openTerm } = useApp();
+  const projectName = s.projects.find((x) => x.id === projectId)?.name || "Projekt";
   const L = LESSONS[t.lesson];
   const c = L ? courseOf(t.lesson) : null;
   const before = c ? c.lessons.slice(0, c.lessons.indexOf(t.lesson)).filter((x) => !s.done[x]) : [];
@@ -208,13 +209,13 @@ function StuckBody({ t, onMark, onClose, projectId }: { t: Todo; onMark: () => v
       {L && c ? (
         <>
           <p>Das hilft dir bei diesem Schritt:</p>
-          <button className="card tap flex items-center gap-3 border-accent p-3.5 text-left" onClick={() => { onClose(); go("lernen/" + t.lesson); }}>
+          <button className="card tap flex items-center gap-3 border-accent p-3.5 text-left" onClick={() => { onClose(); goVia("lernen/" + t.lesson, { label: projectName, kind: "Projekt" }); }}>
             <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-xl font-mono text-[13px] font-bold text-white" style={{ background: c.color }}>{c.ico}</span>
             <span className="flex-1"><span className="block text-[13px] text-muted">{s.done[t.lesson] ? "Wiederholen" : "Noch nicht gemacht"} · {L.min} Min.</span><b>{L.title}</b></span>
             <Icon name="arrow" />
           </button>
           {M && (
-            <button className="card tap flex items-center gap-3 p-3.5 text-left" onClick={() => { onClose(); update((d) => { d.activeProject = projectId; }); go("praxis/" + M.id); }}>
+            <button className="card tap flex items-center gap-3 p-3.5 text-left" onClick={() => { onClose(); update((d) => { d.activeProject = projectId; }); goVia("praxis/" + M.id, { label: projectName, kind: "Projekt" }); }}>
               <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-xl bg-ok-soft text-ok"><Icon name="tool" /></span>
               <span className="flex-1"><span className="block text-[13px] text-muted">Mission · {M.min} Min.</span><b>{M.title}</b></span>
               <Icon name="arrow" />

@@ -10,7 +10,9 @@ import { Icon } from "../Icon";
 import { CodeBlock, copyText, QuizQuestion, Tag } from "../ui";
 
 export function MissionView({ id }: { id: string }) {
-  const { s, go, update, addXP, toast, checkBadges, confetti, setReturnTo } = useApp();
+  const { s, go, update, addXP, toast, checkBadges, confetti, goVia, backFor, goBack } = useApp();
+  const back = backFor("praxis/" + id);
+  const leave = () => (back ? goBack() : go("praxis"));
   const m = MISSION_BY_ID[id];
   const st = s.missions[id];
   // Zwischenstand der Mission (falls man kurz zur Lektion wechselt)
@@ -25,8 +27,7 @@ export function MissionView({ id }: { id: string }) {
     try { sessionStorage.setItem(draftKey, JSON.stringify({ qi, quizDone, result, projectId })); } catch {}
   }, [draftKey, qi, quizDone, result, projectId]);
   const toLesson = () => {
-    setReturnTo({ route: "praxis/" + id, label: m.title, lesson: m.lesson });
-    go("lernen/" + m.lesson);
+    goVia("lernen/" + m.lesson, { label: m.title, kind: "Mission" });
   };
   const project = s.projects.find((p) => p.id === projectId);
   // Offenes To-do im gewählten Projekt, zu dem diese Mission gehört
@@ -52,13 +53,13 @@ export function MissionView({ id }: { id: string }) {
     if (linkedTodo && tickTodo) setTimeout(() => toast(`To-do „${linkedTodo.text}“ abgehakt`), 1500);
     if (first) { addXP(m.xp, "Mission geschafft"); confetti(); } else toast(txt && project ? "Im Projekt gespeichert" : "Gespeichert");
     setTimeout(checkBadges, 0);
-    go(project ? "projekte/" + project.id : "praxis");
+    if (back) goBack(); else go(project ? "projekte/" + project.id : "praxis");
   };
 
   return (
     <div className="flex flex-col gap-3.5">
       <div className="flex items-center gap-3">
-        <button aria-label="Zurück" onClick={() => history.length > 1 ? history.back() : go("praxis")} className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-line bg-surface"><Icon name="back" size={18} /></button>
+        <button aria-label="Zurück" onClick={leave} className="grid h-10 w-10 flex-none place-items-center rounded-xl border border-line bg-surface"><Icon name="back" size={18} /></button>
         <span className="flex-1" />
         <Tag tone={m.level === "play" ? "warn" : m.level === "ai" ? "acc" : "ok"}>{LEVELS[m.level].label}</Tag>
         {st?.done && <Tag tone="ok">erledigt</Tag>}
@@ -125,7 +126,7 @@ export function MissionView({ id }: { id: string }) {
       </button>
 
       {quizDone && <div className="sticky bottom-[calc(84px+env(safe-area-inset-bottom))] z-[5] mt-2 grid grid-cols-[1fr_2fr] gap-2.5">
-        <button className="btn-ghost" onClick={() => go("praxis")}>Später</button>
+        <button className="btn-ghost" onClick={leave}>Später</button>
         <button className="btn-primary" disabled={!quizDone} onClick={complete}>
           {project && m.result ? "Im Projekt speichern" : st?.done ? "Speichern" : "Mission abschließen"}
         </button>

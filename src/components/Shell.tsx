@@ -44,7 +44,7 @@ export default function Shell() {
 }
 
 function Frame() {
-  const { s, route, go, update } = useApp();
+  const { s, route, go, update, clearBack } = useApp();
   const [tab, sub] = route.split("/");
   const lessonOpen = tab === "lernen" && sub && LESSONS[sub];
   const missionOpen = tab === "praxis" && sub && MISSION_BY_ID[sub];
@@ -101,7 +101,7 @@ function Frame() {
             {TABS.map((t) => {
               const on = tab === t.id;
               return (
-                <button key={t.id} onClick={() => go(t.id)} aria-current={on ? "page" : undefined}
+                <button key={t.id} onClick={() => { clearBack(); go(t.id); }} aria-current={on ? "page" : undefined}
                   className={`relative flex min-w-[60px] flex-col items-center gap-0.5 rounded-xl px-1 py-1 text-[11px] ${on ? "font-semibold text-accent-text" : "text-muted"}`}>
                   {on && <span className="absolute -top-2 h-[3px] w-[22px] rounded-full bg-accent" />}
                   <span className={`transition-transform ${on ? "-translate-y-0.5 scale-110" : ""}`}><Icon name={t.icon} size={23} /></span>
