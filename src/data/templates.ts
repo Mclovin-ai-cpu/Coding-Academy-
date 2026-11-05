@@ -214,7 +214,7 @@ export const TEMPLATES: Record<string, Template> = {
     ]
   },
   "content": {
-    "label": "Content & Newsletter",
+    "label": "Newsletter & Blog",
     "emoji": "✉️",
     "todos": [
       [
@@ -256,7 +256,7 @@ export const TEMPLATES: Record<string, Template> = {
   },
   "social": {
     "label": "Social-Media-Kanal",
-    "emoji": "📱",
+    "emoji": "💬",
     "todos": [
       [
         "Plattform wählen: Wo ist deine Zielgruppe?",

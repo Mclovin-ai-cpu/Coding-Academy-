@@ -469,12 +469,12 @@ export const LESSONS: Record<string, Lesson> = {
     ]
   },
   "pwa": {
-    "title": "Web-App & PWA",
+    "title": "Web-App, PWA oder App?",
     "min": 10,
     "intro": [
-      "Eine <b>Web-App</b> läuft im Browser, fühlt sich aber an wie eine App.",
-      "Eine <b>PWA</b> (Progressive Web App) kannst du zum Home-Bildschirm hinzufügen. Sie startet im Vollbild und kann teilweise offline funktionieren. Genau so nutzt du diese Academy.",
-      "Für eine <b>native</b> App im App Store brauchst du z. B. Swift oder React Native und ein Apple-Entwicklerkonto."
+      "<b>Web-App und App sind nicht dasselbe.</b> Eine <b>Web-App</b> läuft im Browser: Du öffnest eine Adresse, nichts wird installiert. Sie funktioniert auf jedem Gerät, Updates sind sofort für alle da.",
+      "Eine <b>PWA</b> (Progressive Web App) ist eine Web-App, die du zum Home-Bildschirm hinzufügen kannst. Sie startet im Vollbild und fühlt sich an wie eine App, kommt aber nicht aus dem Store. Genau so nutzt du diese Academy.",
+      "Eine <b>native</b> App (oft einfach „App“ genannt) lädst du aus dem App Store oder Google Play. Sie kann mehr Handy-Funktionen nutzen, z. B. zuverlässige Push-Nachrichten oder Bluetooth, braucht aber Entwicklerkonten, eine Prüfung durch Apple bzw. Google und eigene Technik wie Swift, Expo oder Capacitor."
     ],
     "terms": [
       "webapp",
@@ -482,12 +482,22 @@ export const LESSONS: Record<string, Lesson> = {
       "native"
     ],
     "code": {
-      "lang": "html",
-      "text": "<!-- Macht die Seite home-screen-tauglich -->\n<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\n<link rel=\"manifest\" href=\"/manifest.json\">"
+      "lang": "vergleich",
+      "text": "                Web-App      PWA            Native App\nÖffnen über     Adresse      Home-Bildschirm App-Symbol\nInstallation    keine        1 Tipp         aus dem Store\nUpdates         sofort       sofort         über den Store\nPush, Kamera    begrenzt     eingeschränkt  voll\nKosten Start    gering       gering         höher (Konten, Prüfung)"
     },
-    "tip": "Starte fast immer als PWA: kein App Store, sofort teilbar, später ausbaubar.",
+    "tip": "Starte fast immer als Web-App bzw. PWA: kein Store, sofort teilbar, später ausbaubar. Wie der Schritt in den Store geht, zeigt die Lektion „Vom Web in den App Store“.",
     "task": "Soll deine Idee eine Website, eine PWA oder eine App-Store-App werden? Warum?",
     "quiz": [
+      {
+        "q": "Sind Web-App und App aus dem Store dasselbe?",
+        "a": [
+          "Nein: Web-App läuft im Browser, die App wird aus dem Store installiert",
+          "Ja, nur der Name ist anders",
+          "Nein: Eine Web-App braucht immer den App Store"
+        ],
+        "c": 0,
+        "why": "Web-App = Browser, keine Installation. Native App = Store, mehr Handy-Funktionen."
+      },
       {
         "q": "Was ist ein Vorteil einer PWA?",
         "a": [

@@ -3,12 +3,14 @@ import { COURSES } from "@/data/courses";
 import type { Card } from "@/data/types";
 import { LESSONS } from "@/data/lessons";
 import { missionForLesson } from "@/data/missions";
+import { TEMPLATES } from "@/data/templates";
 import { modelForTemplate, MODEL_BY_ID, MODELS } from "@/data/strategy";
 import { TEST } from "./edition";
 
 export type Todo = { id: string; text: string; lesson: string; mission?: string; done: boolean; stuck: boolean };
 export type Note = { id: string; lesson?: string; mission?: string; text: string; date: string };
-export type Project = { id: string; name: string; idea: string; type: string; created: string; todos: Todo[]; notes: Note[] };
+/** type = Hauptart, types = alle Arten (z. B. Online-Shop + Web-App) */
+export type Project = { id: string; name: string; idea: string; type: string; types?: string[]; created: string; todos: Todo[]; notes: Note[] };
 export type CustomCard = Card & { created: string };
 export type MissionState = { done: boolean; date: string; projectId?: string; result?: string };
 
@@ -123,6 +125,27 @@ export const isCustom = (id: string) => id.startsWith("eigen-");
 export const projProgress = (p: Project) => (p.todos.length ? Math.round((p.todos.filter((t) => t.done).length / p.todos.length) * 100) : 0);
 
 export const trackKey = (s: State) => s.activeProject || "_";
+/** Alle Arten eines Projekts, Hauptart zuerst */
+export const projectTypes = (p: { type: string; types?: string[] }) => [...new Set([p.type, ...(p.types || [])])].filter((t) => TEMPLATES[t]);
+export const typesLabel = (p: { type: string; types?: string[] }) => projectTypes(p).map((t) => TEMPLATES[t].label).join(" + ") || "Projekt";
+/** Geschäftsmodelle eines Projekts (eins je Art, ohne Doppelungen) */
+export const projectModels = (p: { type: string; types?: string[] }) => [...new Map(projectTypes(p).map((t) => { const m = modelForTemplate(t); return [m.id, m]; })).values()];
+
+/** Diese Themen kommen in fast jeder Vorlage vor und werden beim Kombinieren nur einmal übernommen */
+const SHARED_LESSONS = new Set(["domain", "legal", "deploy", "git"]);
+/** To-dos für eine oder mehrere Arten zusammenführen, ohne Doppelungen */
+export function todosForTypes(types: string[], existing: Todo[] = []): Todo[] {
+  const out = [...existing];
+  for (const type of types) {
+    for (const [text, lesson, mission] of TEMPLATES[type]?.todos || []) {
+      const m = mission === "keine" ? undefined : mission || missionForLesson(lesson)?.id;
+      const dup = out.some((t) => t.text === text || (m && t.mission === m) || (SHARED_LESSONS.has(lesson) && t.lesson === lesson));
+      if (!dup) out.push({ id: uid(), text, lesson, mission: m, done: false, stuck: false });
+    }
+  }
+  return out;
+}
+
 /** Geschäftsmodell des aktiven Projekts (ohne Projekt: gewähltes Modell) */
 export const activeModel = (s: State) => {
   const p = s.projects.find((x) => x.id === s.activeProject);

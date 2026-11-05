@@ -7,7 +7,7 @@ import { LEAN, MODEL_BY_ID, MODELS, missionsOfModel, modelForTemplate, type Mode
 import { TEMPLATES } from "@/data/templates";
 import type { MissionLevel } from "@/data/types";
 import { useApp } from "@/lib/app";
-import { activeModel } from "@/lib/state";
+import { activeModel, projectModels, typesLabel } from "@/lib/state";
 import { Icon } from "../Icon";
 import { Bar, Label } from "../ui";
 
@@ -29,7 +29,8 @@ export function Practice() {
   const [modelId, setModelId] = useState(activeModel(s).id);
   const model = MODEL_BY_ID[modelId] || MODELS[0];
   const projectModel = active ? modelForTemplate(active.type) : null;
-  const ownModel = !active || projectModel?.id === model.id;
+  const pModels = active ? projectModels(active) : [];
+  const ownModel = !active || pModels.some((m) => m.id === model.id);
   const key = active && ownModel ? active.id : active ? "_vorschau-" + model.id : "_";
   const tk = s.track[key] || {};
   const nDone = model.track.filter((st) => tk[st.id]).length;
@@ -77,7 +78,7 @@ export function Practice() {
           {MODELS.map((m) => (
             <button key={m.id} aria-pressed={model.id === m.id} onClick={() => { setModelId(m.id); if (!active) update((d) => { d.model = m.id; }); }}
               className={`flex-none rounded-full border px-3 py-[7px] text-[13px] ${model.id === m.id ? "border-accent bg-accent font-semibold text-accent-ink" : "border-line bg-surface"}`}>
-              {m.short}{projectModel?.id === m.id ? " · dein Projekt" : ""}
+              {m.short}{pModels.some((x) => x.id === m.id) ? " · dein Projekt" : ""}
             </button>
           ))}
         </div>
@@ -87,7 +88,7 @@ export function Practice() {
 
       {active && !ownModel && (
         <div className="rounded-2xl bg-surface2 p-3.5 text-[13px]">
-          Du siehst gerade Ideen für <b>{model.label}</b>. Dein Projekt „{active.name}“ gehört zu <b>{projectModel!.label}</b>.{" "}
+          Du siehst gerade Ideen für <b>{model.label}</b>. Dein Projekt „{active.name}“ gehört zu <b>{pModels.map((m) => m.label).join(" + ")}</b>.{" "}
           <button className="font-semibold text-accent-text" onClick={() => setModelId(projectModel!.id)}>Zurück zu deinem Modell</button>
         </div>
       )}
@@ -113,7 +114,7 @@ export function Practice() {
           )}
           {pm.forType.length > 0 && (
             <>
-              <Label className="mt-1">Speziell für {TEMPLATES[active.type]?.label || "dein Projekt"} · {pm.forType.length}</Label>
+              <Label className="mt-1">Speziell für {typesLabel(active)} · {pm.forType.length}</Label>
               <div className="flex flex-col gap-2">{pm.forType.map((m) => <MissionRow key={m.id} id={m.id} />)}</div>
             </>
           )}

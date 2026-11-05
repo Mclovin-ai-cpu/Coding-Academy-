@@ -7,7 +7,7 @@ import { LESSONS } from "@/data/lessons";
 import { LEVELS, MISSION_BY_ID, missionForLesson, missionsForProject } from "@/data/missions";
 import { TEMPLATES } from "@/data/templates";
 import { useApp } from "@/lib/app";
-import { courseOf, projProgress, today, uid, type Project, type Todo } from "@/lib/state";
+import { courseOf, projProgress, today, typesLabel, uid, type Project, type Todo } from "@/lib/state";
 import { Icon } from "../Icon";
 import { copyText, Label, Ring, Sheet } from "../ui";
 import { ProjectSheet } from "./Projects";
@@ -57,7 +57,7 @@ export function ProjectView({ id }: { id: string }) {
     setNewT(""); setNewL(""); toast("To-do hinzugefügt");
   };
   const brief = () => {
-    const txt = `Projekt: ${p.name}\nArt: ${T?.label || "Projekt"}\nIdee: ${p.idea || "-"}\n\nErledigt:\n${p.todos.filter((t) => t.done).map((t) => "- " + t.text).join("\n") || "-"}\n\nOffen:\n${p.todos.filter((t) => !t.done).map((t) => "- " + t.text + (t.stuck ? " (hier hänge ich fest)" : "")).join("\n") || "-"}\n\nNotizen & Ergebnisse:\n${p.notes.slice(0, 6).map((n) => "- " + n.text).join("\n") || "-"}\n\nHilf mir beim nächsten offenen Schritt. Ich bin Einsteiger beim Vibecoding, erkläre Begriffe kurz.`;
+    const txt = `Projekt: ${p.name}\nArt: ${typesLabel(p)}\nIdee: ${p.idea || "-"}\n\nErledigt:\n${p.todos.filter((t) => t.done).map((t) => "- " + t.text).join("\n") || "-"}\n\nOffen:\n${p.todos.filter((t) => !t.done).map((t) => "- " + t.text + (t.stuck ? " (hier hänge ich fest)" : "")).join("\n") || "-"}\n\nNotizen & Ergebnisse:\n${p.notes.slice(0, 6).map((n) => "- " + n.text).join("\n") || "-"}\n\nHilf mir beim nächsten offenen Schritt. Ich bin Einsteiger beim Vibecoding, erkläre Begriffe kurz.`;
     copyText(txt, toast, "Briefing kopiert");
   };
 
@@ -76,7 +76,7 @@ export function ProjectView({ id }: { id: string }) {
         <div className="flex items-center gap-3">
           <Ring pct={pr} />
           <div className="min-w-0 flex-1">
-            <span className="text-[13px] text-muted">{T?.emoji || "💡"} {T?.label || "Projekt"} · seit {p.created.split("-").reverse().join(".")}{s.activeProject === p.id ? " · aktiv" : ""}</span>
+            <span className="text-[13px] text-muted">{T?.emoji || "💡"} {typesLabel(p)} · seit {p.created.split("-").reverse().join(".")}{s.activeProject === p.id ? " · aktiv" : ""}</span>
             <h1 className="text-[22px] font-bold leading-tight">{p.name}</h1>
             <span className="font-mono text-[13px] font-semibold">{p.todos.filter((t) => t.done).length}/{p.todos.length} To-dos erledigt</span>
           </div>

@@ -469,7 +469,7 @@ export const CARDS: Record<string, Card> = {
   },
   "webapp": {
     "t": "Web-App",
-    "s": "Anwendung, die im Browser läuft.",
+    "s": "Anwendung, die im Browser läuft, ohne Installation. Nicht dasselbe wie eine App aus dem Store.",
     "a": "Ein Werkzeug statt eines Prospekts.",
     "e": "Diese Academy, Google Docs",
     "w": "Eine Codebasis für alle Geräte.",
@@ -491,7 +491,7 @@ export const CARDS: Record<string, Card> = {
   },
   "native": {
     "t": "Native App",
-    "s": "App speziell für iOS oder Android.",
+    "s": "App aus dem App Store oder Google Play, speziell für iOS oder Android gebaut.",
     "a": "Ein Maßanzug statt Konfektion.",
     "e": "Swift (iOS), Kotlin (Android), React Native",
     "w": "Teurer, aber vollen Zugriff auf Handy-Funktionen.",

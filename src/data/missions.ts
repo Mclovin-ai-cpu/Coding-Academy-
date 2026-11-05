@@ -251,7 +251,8 @@ export function missionForLesson(lesson: string): Mission | undefined {
 }
 
 /** Projektbezogene Praxis: Missionen aus den offenen To-dos und passend zur Projektart */
-export function missionsForProject(p: { type: string; todos: { text: string; lesson: string; mission?: string; done: boolean }[] }) {
+export function missionsForProject(p: { type: string; types?: string[]; todos: { text: string; lesson: string; mission?: string; done: boolean }[] }) {
+  const types = [p.type, ...(p.types || [])];
   const seen = new Set<string>();
   const fromTodos: { mission: Mission; todo: string }[] = [];
   for (const t of p.todos) {
@@ -259,7 +260,7 @@ export function missionsForProject(p: { type: string; todos: { text: string; les
     seen.add(t.mission);
     fromTodos.push({ mission: MISSION_BY_ID[t.mission], todo: t.text });
   }
-  const forType = MISSIONS.filter((m) => m.types?.includes(p.type) && !seen.has(m.id));
+  const forType = MISSIONS.filter((m) => m.types?.some((t) => types.includes(t)) && !seen.has(m.id));
   forType.forEach((m) => seen.add(m.id));
   return { fromTodos, forType, ids: seen };
 }

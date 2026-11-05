@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { TEMPLATES } from "@/data/templates";
-import { missionForLesson } from "@/data/missions";
 import { useApp } from "@/lib/app";
-import { projProgress, today, uid, type Project } from "@/lib/state";
+import { projectTypes, projProgress, today, todosForTypes, typesLabel, uid, type Project } from "@/lib/state";
 import { Icon } from "../Icon";
 import { Ring, Sheet } from "../ui";
 
@@ -24,7 +23,7 @@ export function Projects() {
           <button key={p.id} className="card tap flex items-center gap-3 p-4 text-left" onClick={() => go("projekte/" + p.id)}>
             <Ring pct={projProgress(p)} />
             <span className="min-w-0 flex-1">
-              <span className="block text-[13px] text-muted">{TEMPLATES[p.type]?.emoji || "💡"} {TEMPLATES[p.type]?.label || "Projekt"}{s.activeProject === p.id ? " · aktiv" : ""}</span>
+              <span className="block text-[13px] text-muted">{TEMPLATES[p.type]?.emoji || "💡"} {typesLabel(p)}{s.activeProject === p.id ? " · aktiv" : ""}</span>
               <b className="text-[17px]">{p.name}</b>
               <span className="block text-[13px] text-muted">
                 {p.todos.filter((t) => t.done).length}/{p.todos.length} To-dos{stuck ? <span className="text-warn"> · {stuck} mit Hänger</span> : null}
@@ -56,7 +55,8 @@ function ProjectForm({ onClose, project }: { onClose: () => void; project?: Proj
   const { update, addXP, checkBadges, go, toast } = useApp();
   const [name, setName] = useState(project?.name || "");
   const [idea, setIdea] = useState(project?.idea || "");
-  const [type, setType] = useState(project?.type || "landing");
+  const [types, setTypes] = useState<string[]>(project ? projectTypes(project) : ["landing"]);
+  const toggle = (k: string) => setTypes((t) => (t.includes(k) ? (t.length > 1 ? t.filter((x) => x !== k) : t) : [...t, k]));
   const [sure, setSure] = useState(false);
   const edit = !!project;
 
@@ -64,12 +64,17 @@ function ProjectForm({ onClose, project }: { onClose: () => void; project?: Proj
     const n = name.trim();
     if (!n) { toast("Bitte einen Namen eingeben"); return; }
     if (edit) {
-      update((d) => { const p = d.projects.find((x) => x.id === project.id)!; p.name = n; p.idea = idea.trim(); });
-      toast("Gespeichert"); onClose(); return;
+      const added = types.filter((t) => !projectTypes(project).includes(t));
+      update((d) => {
+        const p = d.projects.find((x) => x.id === project.id)!;
+        p.name = n; p.idea = idea.trim(); p.type = types[0]; p.types = types;
+        if (added.length) p.todos = todosForTypes(added, p.todos);
+      });
+      toast(added.length ? "Gespeichert · neue To-dos ergänzt" : "Gespeichert"); onClose(); return;
     }
     const np: Project = {
-      id: uid(), name: n, idea: idea.trim(), type, created: today(), notes: [],
-      todos: TEMPLATES[type].todos.map(([text, lesson, mission]) => ({ id: uid(), text, lesson, mission: mission === "keine" ? undefined : mission || missionForLesson(lesson)?.id, done: false, stuck: false }))
+      id: uid(), name: n, idea: idea.trim(), type: types[0], types, created: today(), notes: [],
+      todos: todosForTypes(types)
     };
     update((d) => { d.projects.unshift(np); d.activeProject = np.id; });
     onClose();
@@ -86,20 +91,22 @@ function ProjectForm({ onClose, project }: { onClose: () => void; project?: Proj
       <input id="pn" className={field} value={name} onChange={(e) => setName(e.target.value)} placeholder="z. B. Fahrrad-Vergleichsportal" />
       <label htmlFor="pi" className="mb-1.5 mt-3 text-[13px] font-semibold">Idee in einem Satz</label>
       <textarea id="pi" className={field + " min-h-[80px]"} value={idea} onChange={(e) => setIdea(e.target.value)} placeholder="Was willst du bauen und für wen?" />
-      {!edit && (
-        <>
-          <span className="mb-1.5 mt-3 text-[13px] font-semibold">Art des Projekts</span>
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(TEMPLATES).map(([k, t]) => (
-              <button key={k} onClick={() => setType(k)} aria-pressed={type === k}
-                className={`rounded-full border px-3 py-[7px] text-[13px] ${type === k ? "border-accent bg-accent text-accent-ink" : "border-line bg-surface"}`}>
-                {t.emoji} {t.label}
-              </button>
-            ))}
-          </div>
-          <span className="mt-2 text-[13px] text-muted">Du bekommst eine passende To-do-Liste, die du danach frei anpassen kannst.</span>
-        </>
-      )}
+      <span className="mb-1 mt-3 text-[13px] font-semibold">Art des Projekts</span>
+      <span className="mb-2 text-[13px] text-muted">Mehrere möglich, z. B. Online-Shop + Web-App. Die zuerst gewählte ist die Hauptart.</span>
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Art des Projekts">
+        {Object.entries(TEMPLATES).map(([k, t]) => {
+          const i = types.indexOf(k);
+          return (
+            <button key={k} onClick={() => toggle(k)} aria-pressed={i >= 0}
+              className={`rounded-full border px-3 py-[7px] text-[13px] ${i >= 0 ? "border-accent bg-accent text-accent-ink" : "border-line bg-surface"}`}>
+              {t.emoji} {t.label}{i === 0 && types.length > 1 ? " · Hauptart" : ""}
+            </button>
+          );
+        })}
+      </div>
+      <span className="mt-2 text-[13px] text-muted">
+        {edit ? "Neu gewählte Arten ergänzen passende To-dos. Abgewählte Arten löschen keine To-dos." : types.length > 1 ? "Die To-do-Listen werden zusammengeführt, doppelte Schritte (z. B. Domain, Impressum) nur einmal." : "Du bekommst eine passende To-do-Liste, die du danach frei anpassen kannst."}
+      </span>
       <div className="mt-5 grid gap-2.5">
         <button className="btn-primary" onClick={save}>{edit ? "Speichern" : "Projekt anlegen"}</button>
         {edit && (
