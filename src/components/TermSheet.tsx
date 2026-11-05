@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CARDS } from "@/data/cards";
 import { LESSONS } from "@/data/lessons";
 import { useApp } from "@/lib/app";
-import { courseOf, lessonOfTerm } from "@/lib/state";
+import { cardsOf, courseOf, isCustom, lessonOfTerm } from "@/lib/state";
+import { CustomTermForm } from "./CustomTermForm";
 import { Icon } from "./Icon";
 import { copyText, Label, Sheet } from "./ui";
 
@@ -26,12 +26,17 @@ export function TermSheet() {
 
 function TermBody({ id }: { id: string }) {
   const { s, openTerm, toggleFlag, go, toast } = useApp();
+  const CARDS = cardsOf(s);
   const C = CARDS[id];
-  const [keys, setKeys] = useState<K[]>(["a"]);
+  const custom = isCustom(id);
+  const [editing, setEditing] = useState(false);
+  const avail = ASK.filter((x) => C?.[x.k]);
+  const [keys, setKeys] = useState<K[]>(avail.length ? [avail[0].k] : []);
   const [own, setOwn] = useState("");
   const [asked, setAsked] = useState("");
   const lesson = lessonOfTerm(id);
   const flagged = s.flags.includes(id);
+  if (editing) return <CustomTermForm editId={id} onDone={(nid) => { setEditing(false); if (!nid) openTerm(null); }} />;
   if (!C) return null;
 
   const ask = () => {
@@ -41,7 +46,8 @@ function TermBody({ id }: { id: string }) {
     if (/vorstell|bild|analog|vergleich|wie kann|wie sieht|aussehen|verstehe nicht|erklär/.test(q)) k.push("a");
     if (/beispiel|praxis|konkret|zeig|wo begegne|z\.\s?b/.test(q)) k.push("e");
     if (/warum|wieso|wichtig|brauch|nutzen|wofür|bringt/.test(q)) k.push("w");
-    setKeys(k.length ? k : ["a", "e", "w"]);
+    const f = (k.length ? k : (["a", "e", "w"] as K[])).filter((x) => C[x]);
+    setKeys(f);
     setAsked(own.trim());
   };
   const prompt = `Ich lerne gerade Grundlagen für Vibecoding. Erkläre mir den Begriff „${C.t}“ (${C.s}) einfach und mit einem Alltagsvergleich. Meine Frage: ${asked}`;
@@ -50,7 +56,7 @@ function TermBody({ id }: { id: string }) {
     <div className="flex flex-col gap-3.5">
       <div className="flex items-start gap-3">
         <div className="flex flex-1 flex-col gap-1">
-          <Label>{lesson ? courseOf(lesson).title : "Begriff"}</Label>
+          <Label>{custom ? "Eigener Begriff" : lesson ? courseOf(lesson).title : "Begriff"}</Label>
           <h2 className="font-mono text-[26px] font-bold leading-tight">{C.t}</h2>
         </div>
         <button
@@ -63,11 +69,14 @@ function TermBody({ id }: { id: string }) {
         </button>
       </div>
       <p className="text-[17px]">{C.s}</p>
+      {custom && avail.length < 3 && (
+        <p className="text-[13px] text-muted">Tipp: Über „Begriff bearbeiten“ ergänzt du Vergleich, Beispiel und warum er wichtig ist.</p>
+      )}
 
       <div className="flex flex-col gap-2">
-        <span className="text-[13px] text-muted">Was möchtest du genauer wissen?</span>
+        <span className="text-[13px] text-muted">{avail.length ? "Was möchtest du genauer wissen?" : "Frag Claude, wenn etwas unklar ist:"}</span>
         <div className="flex flex-wrap gap-2">
-          {ASK.map((a) => {
+          {avail.map((a) => {
             const on = keys.length === 1 && keys[0] === a.k && !asked;
             return (
               <button
@@ -109,7 +118,7 @@ function TermBody({ id }: { id: string }) {
         <div className="flex flex-col gap-2">
           <Label>Hängt zusammen mit</Label>
           <div className="flex flex-wrap gap-2">
-            {C.r.map((r) => (
+            {C.r.filter((r) => CARDS[r]).map((r) => (
               <button key={r} onClick={() => openTerm(r)}
                 className={`tap rounded-[10px] px-2.5 py-1.5 font-mono text-[13px] font-semibold ${s.flags.includes(r) ? "bg-warn-soft text-warn" : "bg-accent-soft text-accent-text"}`}>
                 {CARDS[r].t}
@@ -120,6 +129,9 @@ function TermBody({ id }: { id: string }) {
       )}
 
       <div className="mt-2 flex flex-col gap-2.5">
+        {custom && (
+          <button className="btn-ghost w-full" onClick={() => setEditing(true)}><Icon name="edit" size={18} /> Begriff bearbeiten</button>
+        )}
         {lesson && (
           <button className="btn-ghost w-full" onClick={() => { openTerm(null); go("lernen/" + lesson); }}>
             Zur Lektion: {LESSONS[lesson].title}

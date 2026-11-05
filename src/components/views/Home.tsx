@@ -1,11 +1,10 @@
 "use client";
 
-import { CARDS } from "@/data/cards";
 import { COURSES } from "@/data/courses";
 import { LESSONS } from "@/data/lessons";
 import { LEVELS, MISSION_BY_ID, TRACK } from "@/data/missions";
 import { useApp } from "@/lib/app";
-import { ALL, courseOf, doneCount, dueCards, level, levelPct, nextLesson, projProgress, streak, trackKey } from "@/lib/state";
+import { ALL, cardsOf, courseOf, doneCount, dueCards, level, levelPct, nextLesson, projProgress, streak, trackKey } from "@/lib/state";
 import { Icon } from "../Icon";
 import { Bar, Label, Ring, Tag } from "../ui";
 
@@ -86,7 +85,7 @@ export function Home() {
         {s.flags.length ? (
           <div className="flex flex-wrap gap-2">
             {s.flags.slice(0, 8).map((f) => (
-              <button key={f} onClick={() => openTerm(f)} className="tap rounded-[10px] bg-warn-soft px-2.5 py-1.5 font-mono text-[13px] font-semibold text-warn">{CARDS[f]?.t}</button>
+              <button key={f} onClick={() => openTerm(f)} className="tap rounded-[10px] bg-warn-soft px-2.5 py-1.5 font-mono text-[13px] font-semibold text-warn">{cardsOf(s)[f]?.t}</button>
             ))}
           </div>
         ) : (

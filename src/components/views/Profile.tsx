@@ -93,7 +93,7 @@ export function Profile() {
           }}>{sure ? "Sicher?" : "Reset"}</button>
         </div>
       </div>
-      <Label className="justify-center">Coding Academy · Version 3.0</Label>
+      <Label className="justify-center">Coding Academy · Version 3.1</Label>
     </div>
   );
 }

@@ -1,14 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CARDS } from "@/data/cards";
 import { useApp } from "@/lib/app";
-import { dueCards } from "@/lib/state";
+import { cardsOf, dueCards, isCustom } from "@/lib/state";
+import { CustomTermForm } from "../CustomTermForm";
+import { Sheet } from "../ui";
 import { Icon } from "../Icon";
 
 type Mode = "wiederholen" | "glossar" | "markiert";
-const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-const letterOf = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "")[0].toUpperCase();
+const LETTERS = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ".split(""), "#"];
+const letterOf = (t: string) => { const c = (t.normalize("NFD").replace(/[\u0300-\u036f]/g, "")[0] || "#").toUpperCase(); return c >= "A" && c <= "Z" ? c : "#"; };
 
 export function Cards({ mode: m }: { mode?: string }) {
   const { s, go } = useApp();
@@ -51,7 +52,8 @@ function Review({ ids, kind }: { ids: string[]; kind: "due" | "flags" }) {
     );
   }
   const id = queue[0];
-  const C = CARDS[id];
+  const C = cardsOf(s)[id];
+  if (!C) { setTimeout(() => setQueue((qq) => qq.slice(1)), 0); return null; }
   const box = s.cards[id]?.box || 0;
   const flagged = s.flags.includes(id);
 
@@ -110,7 +112,11 @@ function Review({ ids, kind }: { ids: string[]; kind: "due" | "flags" }) {
 function Glossary() {
   const { s, openTerm, toggleFlag } = useApp();
   const [q, setQ] = useState("");
-  const all = useMemo(() => Object.keys(CARDS).sort((a, b) => CARDS[a].t.localeCompare(CARDS[b].t, "de")), []);
+  const [adding, setAdding] = useState(false);
+  const [onlyOwn, setOnlyOwn] = useState(false);
+  const CARDS = useMemo(() => cardsOf(s), [s]);
+  const ownCount = Object.keys(s.customCards).length;
+  const all = useMemo(() => Object.keys(CARDS).filter((id) => !onlyOwn || isCustom(id)).sort((a, b) => CARDS[a].t.localeCompare(CARDS[b].t, "de")), [CARDS, onlyOwn]);
   const ql = q.trim().toLowerCase();
   const list = all.filter((id) => !ql || CARDS[id].t.toLowerCase().includes(ql) || CARDS[id].s.toLowerCase().includes(ql));
   const groups = LETTERS.map((L) => ({ L, items: list.filter((id) => letterOf(CARDS[id].t) === L) })).filter((g) => g.items.length);
@@ -118,6 +124,18 @@ function Glossary() {
 
   return (
     <>
+      <div className="flex gap-2">
+        <button className="btn-primary flex-1 !py-3 !text-[15px]" onClick={() => setAdding(true)}><Icon name="plus" size={18} /> Eigenen Begriff hinzufügen</button>
+        {ownCount > 0 && (
+          <button aria-pressed={onlyOwn} onClick={() => setOnlyOwn(!onlyOwn)}
+            className={`flex-none rounded-[14px] border px-3 text-[13px] font-semibold ${onlyOwn ? "border-ink bg-ink text-bg" : "border-line bg-surface"}`}>
+            Eigene · {ownCount}
+          </button>
+        )}
+      </div>
+      <Sheet open={adding} onClose={() => setAdding(false)} label="Eigenen Begriff hinzufügen">
+        {adding && <CustomTermForm onDone={(id) => { setAdding(false); if (id) { setQ(""); setTimeout(() => document.getElementById("gl-" + id)?.scrollIntoView({ behavior: "smooth", block: "center" }), 120); } }} />}
+      </Sheet>
       <label className="flex h-[46px] items-center gap-2 rounded-[14px] border-[1.5px] border-line bg-surface px-3 text-muted focus-within:border-accent">
         <Icon name="search" size={18} />
         <input aria-label="Begriff suchen" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Begriff suchen, z. B. API" className="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none" />
@@ -131,7 +149,12 @@ function Glossary() {
           </button>
         ))}
       </div>
-      {!groups.length && <div className="p-7 text-center text-muted">Nichts gefunden.</div>}
+      {!groups.length && (
+        <div className="flex flex-col items-center gap-2 p-7 text-center text-muted">
+          Nichts gefunden.
+          {q.trim() && <button className="font-semibold text-accent-text" onClick={() => setAdding(true)}>„{q.trim()}“ als eigenen Begriff anlegen</button>}
+        </div>
+      )}
       <div className="flex flex-col gap-1.5">
         {groups.map((g) => (
           <div key={g.L} id={"gl-" + g.L} className="flex scroll-mt-20 flex-col gap-1.5">
@@ -140,10 +163,11 @@ function Glossary() {
               const on = s.flags.includes(id);
               const box = s.cards[id]?.box || 0;
               return (
-                <div key={id} className="card flex items-center gap-2.5 rounded-[14px] px-3 py-2.5">
+                <div key={id} id={"gl-" + id} className="card flex items-center gap-2.5 rounded-[14px] px-3 py-2.5">
                   <button className="tap min-w-0 flex-1 text-left" onClick={() => openTerm(id)}>
                     <span className="flex items-center gap-2 font-mono text-sm font-bold">
                       {CARDS[id].t}
+                      {isCustom(id) && <span className="rounded-md bg-accent-soft px-1.5 py-px font-sans text-[10px] font-semibold text-accent-text">eigener</span>}
                       {box > 0 && <span className="flex gap-[3px]" aria-label={`Stufe ${box}`}>{[0, 1, 2, 3].map((i) => <i key={i} className={`h-1.5 w-1.5 rounded-full ${i < box ? "bg-ok" : "bg-line"}`} />)}</span>}
                     </span>
                     <span className="block truncate text-[13px] text-muted">{CARDS[id].s}</span>
@@ -164,6 +188,7 @@ function Glossary() {
 
 function Flagged() {
   const { s, openTerm, toggleFlag } = useApp();
+  const CARDS = cardsOf(s);
   const [session, setSession] = useState(0);
   if (session) return <Review key={session} ids={s.flags} kind="flags" />;
   if (!s.flags.length) return <Review ids={[]} kind="flags" />;

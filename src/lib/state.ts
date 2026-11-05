@@ -1,10 +1,13 @@
+import { CARDS } from "@/data/cards";
 import { COURSES } from "@/data/courses";
+import type { Card } from "@/data/types";
 import { LESSONS } from "@/data/lessons";
 import { missionForLesson, TRACK } from "@/data/missions";
 
 export type Todo = { id: string; text: string; lesson: string; mission?: string; done: boolean; stuck: boolean };
 export type Note = { id: string; lesson?: string; mission?: string; text: string; date: string };
 export type Project = { id: string; name: string; idea: string; type: string; created: string; todos: Todo[]; notes: Note[] };
+export type CustomCard = Card & { created: string };
 export type MissionState = { done: boolean; date: string; projectId?: string; result?: string };
 
 export type State = {
@@ -25,6 +28,8 @@ export type State = {
   /** Fortschritt der Strecke „Idee umsetzen“ je Projekt ("_" = ohne Projekt) */
   track: Record<string, Record<string, boolean>>;
   activeProject: string;
+  /** Eigene Begriffe im Glossar (IDs beginnen mit "eigen-") */
+  customCards: Record<string, CustomCard>;
 };
 
 export const KEY_V3 = "codingAcademy.v3";
@@ -32,7 +37,7 @@ export const KEY_V2 = "codingAcademy.v2";
 
 export const fresh = (): State => ({
   v: 3, name: "", theme: "system", xp: 0, done: {}, practice: {}, cards: {}, reviewed: 0, projects: [], days: [],
-  badges: [], todosDone: 0, flags: [], missions: {}, track: {}, activeProject: ""
+  badges: [], todosDone: 0, flags: [], missions: {}, track: {}, activeProject: "", customCards: {}
 });
 
 /** Bringt beliebige gespeicherte Daten (v2 oder v3, auch Importe) in die v3-Form. */
@@ -42,6 +47,7 @@ export function normalize(raw: unknown): State {
   s.flags = Array.isArray(s.flags) ? s.flags : [];
   s.missions = s.missions || {};
   s.track = s.track || {};
+  s.customCards = s.customCards && typeof s.customCards === "object" ? s.customCards : {};
   s.projects = (s.projects || []).map((p) => ({
     ...p,
     idea: p.idea || "",
@@ -95,12 +101,17 @@ export function unlockedCards(s: State) {
   const set = new Set<string>();
   ALL.forEach((id) => { if (s.done[id]) LESSONS[id].terms.forEach((t) => set.add(t)); });
   if (!set.size) LESSONS[ALL[0]].terms.forEach((t) => set.add(t));
+  Object.keys(s.customCards).forEach((t) => set.add(t));
   return [...set];
 }
 export function dueCards(s: State) {
   const t = today();
   return unlockedCards(s).filter((id) => !s.cards[id] || s.cards[id].due <= t);
 }
+
+/** Alle Karten: mitgelieferte + eigene */
+export const cardsOf = (s: State): Record<string, Card & { created?: string }> => ({ ...CARDS, ...s.customCards });
+export const isCustom = (id: string) => id.startsWith("eigen-");
 
 export const projProgress = (p: Project) => (p.todos.length ? Math.round((p.todos.filter((t) => t.done).length / p.todos.length) * 100) : 0);
 
